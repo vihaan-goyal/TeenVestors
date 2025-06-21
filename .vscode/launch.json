@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch InvestmentApp",
+      "request": "launch",
+      "mainClass": "Main",                 
+      "classPaths": [
+        "lib/json-20231013.jar"           // this includes your JSON jar
+      ],
+      "projectName": "AppChallenge"   
+    }
+  ]
+}
