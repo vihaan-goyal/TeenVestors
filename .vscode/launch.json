@@ -2,14 +2,28 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "java",
-      "name": "Launch InvestmentApp",
-      "request": "launch",
-      "mainClass": "Main",                 
-      "classPaths": [
-        "lib/json-20231013.jar"           // this includes your JSON jar
-      ],
-      "projectName": "AppChallenge"   
+        "type": "java",
+        "name": "Rates",
+        "request": "launch",
+        "mainClass": "src.Rates",
+        "projectName": "bi_cultural_app_challenge_2025_91304eb4"
+    },
+    {
+        "type": "java",
+        "name": "Main",
+        "request": "launch",
+        "mainClass": "src.Main",
+        "projectName": "bi_cultural_app_challenge_2025_91304eb4"
+    },
+    {
+        "type": "java",
+        "name": "Launch InvestmentApp",
+        "request": "launch",
+        "mainClass": "Main",
+        "classPaths": [
+            "lib/json-20231013.jar"
+        ],
+        "projectName": "AppChallenge"
     }
-  ]
+]
 }

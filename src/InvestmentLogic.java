@@ -1,7 +1,9 @@
 package src;
 import java.util.Random;
 
+
 public class InvestmentLogic {
+    
 
     // 1. Compound Interest
     public static double calculateCompoundInterest(double principal, double rate, int years) {
@@ -53,4 +55,6 @@ public class InvestmentLogic {
         int adjustedCost = (int)(Math.ceil(timeYears/lifespan) * price);
         return (int)((happiness * frequency * 12) + (convenience * lifestyleConvenience))/adjustedCost;
     }
+
+    
 }
