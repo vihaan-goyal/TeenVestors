@@ -138,6 +138,7 @@ public class GUI extends JFrame {
             int years = Integer.parseInt(yearsField.getText()); // Duration in years
 
             double futureValue = InvestmentLogic.calculateCompoundInterest(principal, rate, years);
+            Write.storeCompoundInterest("test", principal, rate, years); 
             resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
 
         } catch (NumberFormatException ex) {
