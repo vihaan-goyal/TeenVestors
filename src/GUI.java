@@ -9,6 +9,17 @@ public class GUI extends JFrame {
     private JPanel topPanel, bottomPanel, inputPanel, outputPanel; // Panels for layout sections
     private JTextField amountField, rateField, yearsField; // Input fields
     private JLabel resultLabel; // Label to display the result
+     private JComboBox<String> investmentTypeBox; //box for type of calculation
+     String[] options = {
+            "Compound Interest",
+            "Simple Interest",
+            "With Annual Contributions",
+            "Appreciating Asset",
+            "Depreciating Asset",
+            "Simulated Crypto",
+            "Inflation-adjusted Value",
+            "Ms. Fernandez Utility"
+        }; //list of options for calculations (moved to public to make code more readible with refferences, since these are basically constants)
 
     public GUI() {
         initFrame();          // Initialize the main frame
@@ -50,18 +61,7 @@ public class GUI extends JFrame {
         inputPanel.setBackground(Color.LIGHT_GRAY);
         inputPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 5, Color.BLACK));
 
-        String[] options = {
-            "Compound Interest",
-            "Simple Interest",
-            "With Annual Contributions",
-            "Appreciating Asset",
-            "Depreciating Asset",
-            "Simulated Crypto",
-            "Inflation-adjusted Value",
-            "Ms. Fernandez Utility"
-        };
-
-        JComboBox<String> investmentTypeBox = new JComboBox<>(options);
+        investmentTypeBox = new JComboBox<>(options);
         investmentTypeBox.setMaximumSize(new Dimension(400, 30));
         investmentTypeBox.setFont(new Font("Arial", Font.PLAIN, 20));
         inputPanel.add(investmentTypeBox);
@@ -131,19 +131,38 @@ public class GUI extends JFrame {
 
     // Handles the calculation logic and updates the result label
     private void handleCalculate() {
-        try {
-            
-            double principal = Double.parseDouble(amountField.getText()); // Initial investment
-            double rate = Double.parseDouble(rateField.getText()) / 100.0; // Convert % to decimal
-            int years = Integer.parseInt(yearsField.getText()); // Duration in years
+        if ((String) investmentTypeBox.getSelectedItem() == (String) options[0]) {
+            try {
+                
+                double principal = Double.parseDouble(amountField.getText()); // Initial investment
+                double rate = Double.parseDouble(rateField.getText()) / 100.0; // Convert % to decimal
+                int years = Integer.parseInt(yearsField.getText()); // Duration in years
 
-            double futureValue = InvestmentLogic.calculateCompoundInterest(principal, rate, years);
-            Write.storeCompoundInterest("test", principal, rate, years); 
-            resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
+                double futureValue = InvestmentLogic.calculateCompoundInterest(principal, rate, years);
+                Write.storeCompoundInterest("test", principal, rate, years); 
+                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
 
-        } catch (NumberFormatException ex) {
-            // Show error if input can't be parsed
-            JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            } catch (NumberFormatException ex) {
+                // Show error if input can't be parsed
+                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        if ((String) investmentTypeBox.getSelectedItem() == (String) options[1]) {
+            try {
+                
+                double principal = Double.parseDouble(amountField.getText()); // Initial investment
+                double rate = Double.parseDouble(rateField.getText()) / 100.0; // Convert % to decimal
+                int years = Integer.parseInt(yearsField.getText()); // Duration in years
+
+                double futureValue = InvestmentLogic.calculateSimpleInterest(principal, rate, years);
+                Write.storeSimpleInterest("test", principal, rate, years); 
+                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
+
+            } catch (NumberFormatException ex) {
+                // Show error if input can't be parsed
+                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
