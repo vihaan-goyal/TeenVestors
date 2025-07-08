@@ -10,6 +10,10 @@ public class GUI extends JFrame {
     private JTextField amountField, rateField, yearsField; // Input fields
     private JLabel resultLabel; // Label to display the result
      private JComboBox<String> investmentTypeBox; //box for type of calculation
+    private JLabel amountLabel = new JLabel();
+    private JLabel rateLabel = new JLabel();
+    private JLabel yearsLabel = new JLabel();
+
      String[] options = {
             "Compound Interest",
             "Simple Interest",
@@ -64,6 +68,7 @@ public class GUI extends JFrame {
         investmentTypeBox = new JComboBox<>(options);
         investmentTypeBox.setMaximumSize(new Dimension(400, 30));
         investmentTypeBox.setFont(new Font("Arial", Font.PLAIN, 20));
+        investmentTypeBox.addActionListener(e -> updateNames());
         inputPanel.add(investmentTypeBox);
         inputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -74,11 +79,11 @@ public class GUI extends JFrame {
         yearsField = new JTextField();
 
         inputPanel.add(Box.createVerticalGlue());
-        inputPanel.add(createLabeledField("Initial Amount ($):", amountField));
+        inputPanel.add(createLabeledField("Initial Amount ($):", amountField, amountLabel));
         inputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        inputPanel.add(createLabeledField("Interest Rate (%):", rateField));
+        inputPanel.add(createLabeledField("Interest Rate (%):", rateField, rateLabel));
         inputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        inputPanel.add(createLabeledField("Years:", yearsField));
+        inputPanel.add(createLabeledField("Years:", yearsField, yearsLabel));
         inputPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
         // Create and add Calculate button
@@ -128,7 +133,52 @@ public class GUI extends JFrame {
         panel.add(textField);
         return panel;
     }
+    // version of helper function for labels needed to be changed later
+     private JPanel createLabeledField(String labelText, JTextField textField, JLabel label) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.setMaximumSize(new Dimension(500, 40));
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.setOpaque(false);
 
+        label.setText(labelText);
+        label.setFont(new Font("Arial", Font.PLAIN, 20));
+
+        textField.setFont(new Font("Arial", Font.PLAIN, 20));
+        textField.setPreferredSize(new Dimension(200, 30));
+
+        panel.add(label);
+        panel.add(textField);
+        return panel;
+    }
+   
+    // update the names on the label fields for different calculation types
+    private void updateNames() {
+            if ((String) investmentTypeBox.getSelectedItem() == (String) options[0] || (String) investmentTypeBox.getSelectedItem() == (String) options[1]) {
+                amountLabel.setText("Initial Amount ($):");
+                rateLabel.setText("Interest Rate (%):");
+                yearsLabel.setText("Years:");
+            }
+            else if ((String) investmentTypeBox.getSelectedItem() == (String) options[3]) {
+                amountLabel.setText("Purchase Price ($):");
+                rateLabel.setText("Predicted Annuel Growth (%):");
+                yearsLabel.setText("Years:");
+            }
+            else if ((String) investmentTypeBox.getSelectedItem() == (String) options[4]) {
+                amountLabel.setText("Purchase Price ($):");
+                rateLabel.setText("Predicted Annuel Decrease (%):");
+                yearsLabel.setText("Years:");
+            }
+            else if ((String) investmentTypeBox.getSelectedItem() == (String) options[5]) {
+                amountLabel.setText("Initial Amount ($):");
+                rateLabel.setText("Predicted Volitivity (%):");
+                yearsLabel.setText("Years:");
+            } 
+            else if ((String) investmentTypeBox.getSelectedItem() == (String) options[6]) {
+                amountLabel.setText("Nominal Value ($):");
+                rateLabel.setText("Predicted Inflation Rate (%):");
+                yearsLabel.setText("Years:");
+            }
+    }
     // Handles the calculation logic and updates the result label
     private void handleCalculate() {
         if ((String) investmentTypeBox.getSelectedItem() == (String) options[0]) {
