@@ -3,6 +3,13 @@
   "configurations": [
     {
         "type": "java",
+        "name": "Main",
+        "request": "launch",
+        "mainClass": "src.Main",
+        "projectName": "bi_cultural_app_challenge_2025_cf224eb5"
+    },
+    {
+        "type": "java",
         "name": "Rates",
         "request": "launch",
         "mainClass": "src.Rates",

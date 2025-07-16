@@ -181,12 +181,13 @@ public class GUI extends JFrame {
     }
     // Handles the calculation logic and updates the result label
     private void handleCalculate() {
-        if ((String) investmentTypeBox.getSelectedItem() == (String) options[0]) {
-            try {
-                
+                        
                 double principal = Double.parseDouble(amountField.getText()); // Initial investment
                 double rate = Double.parseDouble(rateField.getText()) / 100.0; // Convert % to decimal
                 int years = Integer.parseInt(yearsField.getText()); // Duration in years
+
+        if ((String) investmentTypeBox.getSelectedItem() == (String) options[0]) {
+            try {
 
                 double futureValue = InvestmentLogic.calculateCompoundInterest(principal, rate, years);
                 Write.storeCompoundInterest("test", principal, rate, years); 
@@ -198,15 +199,63 @@ public class GUI extends JFrame {
             }
         }
 
-        if ((String) investmentTypeBox.getSelectedItem() == (String) options[1]) {
+        else if ((String) investmentTypeBox.getSelectedItem() == (String) options[1]) {
             try {
-                
-                double principal = Double.parseDouble(amountField.getText()); // Initial investment
-                double rate = Double.parseDouble(rateField.getText()) / 100.0; // Convert % to decimal
-                int years = Integer.parseInt(yearsField.getText()); // Duration in years
 
                 double futureValue = InvestmentLogic.calculateSimpleInterest(principal, rate, years);
                 Write.storeSimpleInterest("test", principal, rate, years); 
+                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
+
+            } catch (NumberFormatException ex) {
+                // Show error if input can't be parsed
+                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        else if ((String) investmentTypeBox.getSelectedItem() == (String) options[3]) {
+            try {
+
+                double futureValue = InvestmentLogic.calculateAppreciation(principal, rate, years);
+                Write.storeAppreciation("test", principal, rate, years); 
+                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
+
+            } catch (NumberFormatException ex) {
+                // Show error if input can't be parsed
+                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        else if ((String) investmentTypeBox.getSelectedItem() == (String) options[4]) {
+            try {
+
+                double futureValue = InvestmentLogic.calculateDepreciation(principal, rate, years);
+                Write.storeDepreciation("test", principal, rate, years); 
+                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
+
+            } catch (NumberFormatException ex) {
+                // Show error if input can't be parsed
+                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+         else if ((String) investmentTypeBox.getSelectedItem() == (String) options[5]) {
+            try {
+
+                double futureValue = InvestmentLogic.simulateCryptoValue(principal, rate, years);
+                Write.storeCryptoValue("test", principal, rate, years); 
+                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
+
+            } catch (NumberFormatException ex) {
+                // Show error if input can't be parsed
+                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        else if ((String) investmentTypeBox.getSelectedItem() == (String) options[6]) {
+            try {
+
+                double futureValue = InvestmentLogic.adjustForInflation(principal, rate, years);
+                Write.storeInflation("test", principal, rate, years); 
                 resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
 
             } catch (NumberFormatException ex) {
