@@ -3,6 +3,20 @@
   "configurations": [
     {
         "type": "java",
+        "name": "GUI",
+        "request": "launch",
+        "mainClass": "src.GUI",
+        "projectName": "bi_cultural_app_challenge_2025_91304eb4"
+    },
+    {
+        "type": "java",
+        "name": "ValueProjectionGraph",
+        "request": "launch",
+        "mainClass": "src.ValueProjectionGraph",
+        "projectName": "bi_cultural_app_challenge_2025_91304eb4"
+    },
+    {
+        "type": "java",
         "name": "Main",
         "request": "launch",
         "mainClass": "src.Main",

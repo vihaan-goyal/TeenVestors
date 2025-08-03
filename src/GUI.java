@@ -63,7 +63,11 @@ public class GUI extends JFrame {
     private void buildInputPanel() {
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS)); // Vertical layout
         inputPanel.setBackground(Color.LIGHT_GRAY);
-        inputPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 5, Color.BLACK));
+        inputPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 0, 5, Color.BLACK),
+            BorderFactory.createEmptyBorder(30, 40, 30, 40) // top, left, bottom, right
+    ));
+
 
         investmentTypeBox = new JComboBox<>(options);
         investmentTypeBox.setMaximumSize(new Dimension(400, 30));
@@ -97,7 +101,7 @@ public class GUI extends JFrame {
     }
 
     private void buildOutputPanel() {
-        outputPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 200)); // Centered flow layout
+        outputPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 20)); // Centered flow layout
 
         resultLabel = new JLabel("Future Value: ");
         resultLabel.setFont(new Font("Arial", Font.PLAIN, 32));
@@ -181,89 +185,74 @@ public class GUI extends JFrame {
     }
     // Handles the calculation logic and updates the result label
     private void handleCalculate() {
-                        
-                double principal = Double.parseDouble(amountField.getText()); // Initial investment
-                double rate = Double.parseDouble(rateField.getText()) / 100.0; // Convert % to decimal
-                int years = Integer.parseInt(yearsField.getText()); // Duration in years
+    try {
+        double principal = Double.parseDouble(amountField.getText());
+        double rate = Double.parseDouble(rateField.getText()) / 100.0;
+        int years = Integer.parseInt(yearsField.getText());
 
-        if ((String) investmentTypeBox.getSelectedItem() == (String) options[0]) {
-            try {
+        double futureValue = 0;
+        java.util.List<Double> values = new java.util.ArrayList<>();
+        values.add(principal);
 
-                double futureValue = InvestmentLogic.calculateCompoundInterest(principal, rate, years);
-                Write.storeCompoundInterest("test", principal, rate, years); 
-                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
+        String selected = (String) investmentTypeBox.getSelectedItem();
 
-            } catch (NumberFormatException ex) {
-                // Show error if input can't be parsed
-                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+        if (selected.equals(options[0])) { // Compound Interest
+            for (int i = 1; i <= years; i++) {
+                double v = InvestmentLogic.calculateCompoundInterest(principal, rate, i);
+                values.add(v);
             }
+            futureValue = values.get(values.size() - 1);
+            Write.storeCompoundInterest("test", principal, rate, years);
+        } else if (selected.equals(options[1])) { // Simple Interest
+            for (int i = 1; i <= years; i++) {
+                double v = InvestmentLogic.calculateSimpleInterest(principal, rate, i);
+                values.add(v);
+            }
+            futureValue = values.get(values.size() - 1);
+            Write.storeSimpleInterest("test", principal, rate, years);
+        } else if (selected.equals(options[3])) { // Appreciating Asset
+            for (int i = 1; i <= years; i++) {
+                double v = InvestmentLogic.calculateAppreciation(principal, rate, i);
+                values.add(v);
+            }
+            futureValue = values.get(values.size() - 1);
+            Write.storeAppreciation("test", principal, rate, years);
+        } else if (selected.equals(options[4])) { // Depreciating Asset
+            for (int i = 1; i <= years; i++) {
+                double v = InvestmentLogic.calculateDepreciation(principal, rate, i);
+                values.add(v);
+            }
+            futureValue = values.get(values.size() - 1);
+            Write.storeDepreciation("test", principal, rate, years);
+        } else if (selected.equals(options[5])) { // Simulated Crypto
+            for (int i = 1; i <= years; i++) {
+                double v = InvestmentLogic.simulateCryptoValue(principal, rate, i);
+                values.add(v);
+            }
+            futureValue = values.get(values.size() - 1);
+            Write.storeCryptoValue("test", principal, rate, years);
+        } else if (selected.equals(options[6])) { // Inflation-adjusted Value
+            for (int i = 1; i <= years; i++) {
+                double v = InvestmentLogic.adjustForInflation(principal, rate, i);
+                values.add(v);
+            }
+            futureValue = values.get(values.size() - 1);
+            Write.storeInflation("test", principal, rate, years);
         }
 
-        else if ((String) investmentTypeBox.getSelectedItem() == (String) options[1]) {
-            try {
+        resultLabel.setText(String.format("Future Value: $%.2f", futureValue));
 
-                double futureValue = InvestmentLogic.calculateSimpleInterest(principal, rate, years);
-                Write.storeSimpleInterest("test", principal, rate, years); 
-                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
+        // Show graph in outputPanel
+        outputPanel.removeAll();
+        outputPanel.add(resultLabel);
+        outputPanel.add(new ValueProjectionGraphPanel(values, years));
+        outputPanel.revalidate();
+        outputPanel.repaint();
 
-            } catch (NumberFormatException ex) {
-                // Show error if input can't be parsed
-                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        else if ((String) investmentTypeBox.getSelectedItem() == (String) options[3]) {
-            try {
-
-                double futureValue = InvestmentLogic.calculateAppreciation(principal, rate, years);
-                Write.storeAppreciation("test", principal, rate, years); 
-                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
-
-            } catch (NumberFormatException ex) {
-                // Show error if input can't be parsed
-                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        else if ((String) investmentTypeBox.getSelectedItem() == (String) options[4]) {
-            try {
-
-                double futureValue = InvestmentLogic.calculateDepreciation(principal, rate, years);
-                Write.storeDepreciation("test", principal, rate, years); 
-                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
-
-            } catch (NumberFormatException ex) {
-                // Show error if input can't be parsed
-                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-         else if ((String) investmentTypeBox.getSelectedItem() == (String) options[5]) {
-            try {
-
-                double futureValue = InvestmentLogic.simulateCryptoValue(principal, rate, years);
-                Write.storeCryptoValue("test", principal, rate, years); 
-                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
-
-            } catch (NumberFormatException ex) {
-                // Show error if input can't be parsed
-                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-
-        else if ((String) investmentTypeBox.getSelectedItem() == (String) options[6]) {
-            try {
-
-                double futureValue = InvestmentLogic.adjustForInflation(principal, rate, years);
-                Write.storeInflation("test", principal, rate, years); 
-                resultLabel.setText(String.format("Future Value: $%.2f", futureValue)); // Show result
-
-            } catch (NumberFormatException ex) {
-                // Show error if input can't be parsed
-                JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
     }
+}
 
     // Adds top and bottom panels to the main frame
     private void configureLayout() {
