@@ -1,9 +1,5 @@
-package src;
 import java.util.Random;
-
-
 public class InvestmentLogic {
-    
 
     // 1. Compound Interest
     public static double calculateCompoundInterest(double principal, double rate, int years) {
