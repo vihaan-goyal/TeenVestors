@@ -4,9 +4,11 @@ import java.awt.*;
 public class GUI extends JFrame {
     private JFrame frame;  // Main application frame
     private JPanel topPanel, bottomPanel, inputPanel, outputPanel; // Panels for layout sections
-    private JTextField amountField, rateField, yearsField; // Input fields
+    private JTextField nameField, amountField, rateField, yearsField; // Input fields
     private JLabel resultLabel; // Label to display the result
      private JComboBox<String> investmentTypeBox; //box for type of calculation
+     private JComboBox<String> storageBox;
+     private JLabel nameLabel = new JLabel();
     private JLabel amountLabel = new JLabel();
     private JLabel rateLabel = new JLabel();
     private JLabel yearsLabel = new JLabel();
@@ -75,11 +77,14 @@ public class GUI extends JFrame {
 
         
         // Create and add labeled input fields
+        nameField = new JTextField();
         amountField = new JTextField();
         rateField = new JTextField();
         yearsField = new JTextField();
 
         inputPanel.add(Box.createVerticalGlue());
+        inputPanel.add(createLabeledField("Name (optional):", nameField, nameLabel));
+        inputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         inputPanel.add(createLabeledField("Initial Amount ($):", amountField, amountLabel));
         inputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         inputPanel.add(createLabeledField("Interest Rate (%):", rateField, rateLabel));
@@ -94,6 +99,14 @@ public class GUI extends JFrame {
         calculateButton.addActionListener(e -> handleCalculate());
 
         inputPanel.add(calculateButton);
+        inputPanel.add(Box.createVerticalGlue());
+
+        storageBox = new JComboBox<>(Write.getNames());
+        storageBox.setMaximumSize(new Dimension(400, 30));
+        storageBox.setFont(new Font("Arial", Font.PLAIN, 20));
+        storageBox.addActionListener(e -> loadSave());
+        inputPanel.add(storageBox);
+        inputPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         inputPanel.add(Box.createVerticalGlue());
     }
 
@@ -151,6 +164,18 @@ public class GUI extends JFrame {
         panel.add(textField);
         return panel;
     }
+
+    private void loadSave() {
+        String[] fields = Write.findName((String) storageBox.getSelectedItem()).split(" ");
+        System.out.println(fields[1] + "xxx");
+        if (fields[1].equals("CompoundInterest") || fields[1].equals("SimpleInterest")) {
+            System.out.println("test");
+            nameField.setText(fields[0]);
+            amountField.setText(fields[2]);
+            rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
+            yearsField.setText(fields[4]);
+        }
+    }
    
     // update the names on the label fields for different calculation types
     private void updateNames() {
@@ -158,6 +183,7 @@ public class GUI extends JFrame {
                 amountLabel.setText("Initial Amount ($):");
                 rateLabel.setText("Interest Rate (%):");
                 yearsLabel.setText("Years:");
+
             }
             else if ((String) investmentTypeBox.getSelectedItem() == (String) options[3]) {
                 amountLabel.setText("Purchase Price ($):");
@@ -183,6 +209,7 @@ public class GUI extends JFrame {
     // Handles the calculation logic and updates the result label
     private void handleCalculate() {
     try {
+        String name = nameField.getText();
         double principal = Double.parseDouble(amountField.getText());
         double rate = Double.parseDouble(rateField.getText()) / 100.0;
         int years = Integer.parseInt(yearsField.getText());
@@ -199,55 +226,59 @@ public class GUI extends JFrame {
                 values.add(v);
             }
             futureValue = values.get(values.size() - 1);
-            Write.storeCompoundInterest("test", principal, rate, years);
+            Write.storeCompoundInterest(name, principal, rate, years);
         } else if (selected.equals(options[1])) { // Simple Interest
             for (int i = 1; i <= years; i++) {
                 double v = InvestmentLogic.calculateSimpleInterest(principal, rate, i);
                 values.add(v);
             }
             futureValue = values.get(values.size() - 1);
-            Write.storeSimpleInterest("test", principal, rate, years);
+            Write.storeSimpleInterest(name, principal, rate, years);
         } else if (selected.equals(options[3])) { // Appreciating Asset
             for (int i = 1; i <= years; i++) {
                 double v = InvestmentLogic.calculateAppreciation(principal, rate, i);
                 values.add(v);
             }
             futureValue = values.get(values.size() - 1);
-            Write.storeAppreciation("test", principal, rate, years);
+            Write.storeAppreciation(name, principal, rate, years);
         } else if (selected.equals(options[4])) { // Depreciating Asset
             for (int i = 1; i <= years; i++) {
                 double v = InvestmentLogic.calculateDepreciation(principal, rate, i);
                 values.add(v);
             }
             futureValue = values.get(values.size() - 1);
-            Write.storeDepreciation("test", principal, rate, years);
+            Write.storeDepreciation(name, principal, rate, years);
         } else if (selected.equals(options[5])) { // Simulated Crypto
             for (int i = 1; i <= years; i++) {
                 double v = InvestmentLogic.simulateCryptoValue(principal, rate, i);
                 values.add(v);
             }
             futureValue = values.get(values.size() - 1);
-            Write.storeCryptoValue("test", principal, rate, years);
+            Write.storeCryptoValue(name, principal, rate, years);
         } else if (selected.equals(options[6])) { // Inflation-adjusted Value
             for (int i = 1; i <= years; i++) {
                 double v = InvestmentLogic.adjustForInflation(principal, rate, i);
                 values.add(v);
             }
             futureValue = values.get(values.size() - 1);
-            Write.storeInflation("test", principal, rate, years);
+            Write.storeInflation(name, principal, rate, years);
         }
-
         resultLabel.setText(String.format("Future Value: $%.2f", futureValue));
 
         // Show graph in outputPanel
         outputPanel.removeAll();
         outputPanel.add(resultLabel);
-        outputPanel.add(new ValueProjectionGraphPanel(values, years));
+        //outputPanel.add(new ValueProjectionGraphPanel(values, years));
         outputPanel.revalidate();
         outputPanel.repaint();
 
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+    }
+    storageBox.removeAllItems();
+    String[] temp = Write.getNames();
+    for (int i = 0; i < temp.length; i++) {
+    storageBox.addItem(temp[i]);
     }
 }
 

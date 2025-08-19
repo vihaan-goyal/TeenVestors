@@ -1,0 +1,4 @@
+
+first CompoundInterest 10.0 0.11 12 34.98450596935638
+second CompoundInterest 15.0 0.16 17 187.0152731489763
+third CompoundInterest 15.0 0.16 17 187.0152731489763
