@@ -21,19 +21,54 @@ public class Write {
     }
 
     public static String[] removeDupes(String[] array) {
-            return new HashSet<String>(Arrays.asList(array)).toArray(new String[0]);
+            int count = array.length;
+            Boolean[] stay = new Boolean[array.length];
+            for (int i=0; i < array.length-1; i++) {
+                stay[i] = true;
+                for (int j=i+1; j<array.length; j++) {
+                    if (array[i].equals(array[j])) {
+                        if (stay[i] == true) {
+                        count--;
+                        stay[i] = false;
+                        }
+                    }
+                }
+            }
+
+            stay[array.length-1] = true;
+            String[] finaly = new String[count];
+            int finCount = 0;
+
+            for (int k = 0; k < array.length; k++) {
+                if (stay[k]) {
+                    finaly[finCount] = array[k];
+                    finCount++;
+                }
+            }
+        
+
+            System.out.println("start");
+            for (int p = 0; p < finaly.length; p++) {
+                System.out.println(finaly[p]);
+            }
+            System.out.println("end");
+            return finaly;
 }
     
     public static String findName(String name) {
         try {
             int late = 0;
-        String[] names = getNames();
+            Boolean found = false;
+        String[] names = getNames(false);
         for (int ii = names.length-1; ii >=0; ii--) {
-            if (names[ii].equals(name)) {
+            System.out.println("this name is " + names[ii]);
+            if (names[ii].equals(name) && found == false) {
                 late = ii;
-                break;
+                found = true;
             }
+            
         }
+        System.out.println("latest is " + late + " and the name is " + name);
          
             //creates reader to read the current file
             FileReader fr = new FileReader(filePath);
@@ -46,17 +81,21 @@ public class Write {
             }
             fr.close();
             String[] lines = sb.toString().split("\\n");
-            System.out.println(lines[late+1]);
+            //System.out.println(lines[late+1]);
+            if (late < lines.length) {
             return lines[late+1];
+            } else {
+                return lines[late];
+            }
 
             } catch (IOException e) {
-            System.out.println("An error occurred.");
+            //System.out.println("An error occurred.");
             e.printStackTrace();
             return new String();
             }
     }
 
-    public static String[] getNames() {
+    public static String[] getNames(Boolean dupes) {
         try {
             //creates reader to read the current file
             FileReader fr = new FileReader(filePath);
@@ -75,8 +114,13 @@ public class Write {
                 output[ii-1] = lines[ii].substring(0, lines[ii].indexOf(" "));
             }
             }
-            System.out.println("success");
+            //System.out.println("success");
+            if (dupes) {
             return removeDupes(output);
+            }
+            else {
+                return output;
+            }
         } catch (IOException e) {
             System.out.println("An error occurred.");
         e.printStackTrace();
@@ -101,7 +145,7 @@ public class Write {
             FileWriter store = new FileWriter(filePath);
             store.write(sb +  "\n" + name + " " + "CompoundInterest " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateCompoundInterest(principal, rate, years));
             store.close();
-            System.out.println("success");
+            //System.out.println("success");
         } catch (IOException e) {
             System.out.println("An error occurred.");
         e.printStackTrace();

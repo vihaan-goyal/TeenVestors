@@ -2,3 +2,14 @@
 first CompoundInterest 10.0 0.11 12 34.98450596935638
 second CompoundInterest 15.0 0.16 17 187.0152731489763
 third CompoundInterest 15.0 0.16 17 187.0152731489763
+first CompoundInterest 10.0 0.11 12 34.98450596935638
+second CompoundInterest 15.0 0.16 17 187.0152731489763
+second CompoundInterest 15.0 0.16 17 187.0152731489763
+third CompoundInterest 15.0 0.16 17 187.0152731489763
+first CompoundInterest 10.0 0.11 12 34.98450596935638
+first CompoundInterest 10.0 0.11 12 34.98450596935638
+first CompoundInterest 10.0 0.11 12 34.98450596935638
+first CompoundInterest 10.0 0.11 12 34.98450596935638
+first CompoundInterest 10.0 0.11 12 34.98450596935638
+second CompoundInterest 17.0 0.16 17 211.95064290217312
+second CompoundInterest 19.0 0.16 17 236.88601265536997

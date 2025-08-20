@@ -101,7 +101,7 @@ public class GUI extends JFrame {
         inputPanel.add(calculateButton);
         inputPanel.add(Box.createVerticalGlue());
 
-        storageBox = new JComboBox<>(Write.getNames());
+        storageBox = new JComboBox<>(Write.getNames(true));
         storageBox.setMaximumSize(new Dimension(400, 30));
         storageBox.setFont(new Font("Arial", Font.PLAIN, 20));
         storageBox.addActionListener(e -> loadSave());
@@ -167,15 +167,16 @@ public class GUI extends JFrame {
 
     private void loadSave() {
         String[] fields = Write.findName((String) storageBox.getSelectedItem()).split(" ");
-        System.out.println(fields[1] + "xxx");
+        //System.out.println(fields[1] + "xxx");
         if (fields[1].equals("CompoundInterest") || fields[1].equals("SimpleInterest")) {
-            System.out.println("test");
+            //System.out.println("test");
             nameField.setText(fields[0]);
             amountField.setText(fields[2]);
             rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
             yearsField.setText(fields[4]);
         }
     }
+
    
     // update the names on the label fields for different calculation types
     private void updateNames() {
@@ -208,11 +209,13 @@ public class GUI extends JFrame {
     }
     // Handles the calculation logic and updates the result label
     private void handleCalculate() {
+        String currentName = nameField.getText();
     try {
         String name = nameField.getText();
         double principal = Double.parseDouble(amountField.getText());
         double rate = Double.parseDouble(rateField.getText()) / 100.0;
         int years = Integer.parseInt(yearsField.getText());
+        
 
         double futureValue = 0;
         java.util.List<Double> values = new java.util.ArrayList<>();
@@ -275,11 +278,18 @@ public class GUI extends JFrame {
     } catch (NumberFormatException ex) {
         JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
     }
+    
     storageBox.removeAllItems();
-    String[] temp = Write.getNames();
+    String[] temp = Write.getNames(true);
+    System.out.println("start");
     for (int i = 0; i < temp.length; i++) {
+        //System.out.println(temp[i]);
     storageBox.addItem(temp[i]);
     }
+    storageBox.setSelectedItem(currentName);
+    loadSave();
+    //System.out.println(currentName);
+    System.out.println("end");
 }
 
     // Adds top and bottom panels to the main frame
