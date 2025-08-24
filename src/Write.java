@@ -11,8 +11,11 @@ public class Write {
     //clears the storage file
     public static void clear() {
         try {
+            PrintWriter writer = new PrintWriter(filePath, "UTF-8");
+            writer.println("\n");
+            writer.close();
             FileWriter store = new FileWriter(filePath);
-            store.write("");
+            store.write("\n" + "(default) CompoundInterest 10.0 0.1 10 25.937424601000025");
             store.close();
         } catch (IOException e) {
             System.out.println("An error occurred.");
@@ -108,6 +111,7 @@ public class Write {
             }
             fr.close();
             String[] lines = sb.toString().split("\\n");
+            System.out.println(sb);
             String[] output = new String[lines.length - 1];
             for (int ii=1; ii < lines.length; ii++) {
                 if (lines[ii].indexOf(" ") >= 0) {
