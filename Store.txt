@@ -13,3 +13,21 @@ first CompoundInterest 10.0 0.11 12 34.98450596935638
 first CompoundInterest 10.0 0.11 12 34.98450596935638
 second CompoundInterest 17.0 0.16 17 211.95064290217312
 second CompoundInterest 19.0 0.16 17 236.88601265536997
+third CompoundInterest 15.0 0.16 17 187.0152731489763
+second CompoundInterest 19.0 0.16 17 236.88601265536997
+second CompoundInterest 19.0 0.16 12 112.78451379479512
+second CompoundInterest 19.0 0.16 11 97.22802913344407
+first CompoundInterest 10.0 0.11 12 34.98450596935638
+third CompoundInterest 15.0 0.16 17 187.0152731489763
+first CompoundInterest 100.0 0.11 12 349.84505969356377
+gerald CompoundInterest 999.0 1.0 99 6.331914748140006E32
+second CompoundInterest 19.0 0.16 11 97.22802913344407
+henry CompoundInterest 1.0 0.01 1 1.01
+henryAppreciation  1.0 0.01 1 0.9994646400084395
+(default) CompoundInterest 14.0 0.11 12 48.97830835709893
+(default) CompoundInterest 14.0 0.11 12 48.97830835709893
+(default) CompoundInterest 14.0 0.11 12 48.97830835709893
+(default) CompoundInterest 11.0 0.11 12 38.48295656629202
+(default) CompoundInterest 9.0 0.11 12 31.48605537242074
+third CompoundInterest 15.0 0.16 17 187.0152731489763
+(default) CompoundInterest 10.0 0.11 12 34.98450596935638

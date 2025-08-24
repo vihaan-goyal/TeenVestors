@@ -198,7 +198,7 @@ public class GUI extends JFrame {
             }
             else if ((String) investmentTypeBox.getSelectedItem() == (String) options[5]) {
                 amountLabel.setText("Initial Amount ($):");
-                rateLabel.setText("Predicted Volitivity (%):");
+                rateLabel.setText("Predicted Volitility (%):");
                 yearsLabel.setText("Years:");
             } 
             else if ((String) investmentTypeBox.getSelectedItem() == (String) options[6]) {
@@ -212,6 +212,10 @@ public class GUI extends JFrame {
         String currentName = nameField.getText();
     try {
         String name = nameField.getText();
+        if (name.equals("")) {
+            name = "(default)";
+        }
+        currentName = name;
         double principal = Double.parseDouble(amountField.getText());
         double rate = Double.parseDouble(rateField.getText()) / 100.0;
         int years = Integer.parseInt(yearsField.getText());
@@ -271,7 +275,7 @@ public class GUI extends JFrame {
         // Show graph in outputPanel
         outputPanel.removeAll();
         outputPanel.add(resultLabel);
-        //outputPanel.add(new ValueProjectionGraphPanel(values, years));
+        outputPanel.add(new ValueProjectionGraphPanel(values, years));
         outputPanel.revalidate();
         outputPanel.repaint();
 
