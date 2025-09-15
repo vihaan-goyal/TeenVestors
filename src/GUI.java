@@ -6,26 +6,26 @@ public class GUI extends JFrame {
     private JPanel topPanel, bottomPanel, inputPanel, outputPanel; // Panels for layout sections
     private JTextField nameField, amountField, rateField, yearsField; // Input fields
     private JLabel resultLabel; // Label to display the result
-     private JComboBox<String> investmentTypeBox; //box for type of calculation
-     private JComboBox<String> storageBox;
-     private JLabel nameLabel = new JLabel();
+    private JComboBox<String> investmentTypeBox; //box for type of calculation
+    private JComboBox<String> storageBox;
+    private JLabel nameLabel = new JLabel();
     private JLabel amountLabel = new JLabel();
     private JLabel rateLabel = new JLabel();
     private JLabel yearsLabel = new JLabel();
 
-     String[] options = {
-            "Compound Interest",
-            "Simple Interest",
-            "With Annual Contributions",
-            "Appreciating Asset",
-            "Depreciating Asset",
-            "Simulated Crypto",
-            "Inflation-adjusted Value",
-            "Ms. Fernandez Utility"
-        }; //list of options for calculations (moved to public to make code more readible with refferences, since these are basically constants)
+    String[] options = {
+        "Compound Interest",
+        "Simple Interest", 
+        "With Annual Contributions",
+        "Appreciating Asset",
+        "Depreciating Asset",
+        "Simulated Crypto",
+        "Inflation-adjusted Value"
+    }; //list of options for calculations (moved to public to make code more readible with refferences, since these are basically constants)
 
     public GUI() {
         initFrame();          // Initialize the main frame
+        createMenuBar();      //creates the menu bar
         initPanels();         // Create and set up the panels
         buildTopPanel();      // Set up top panel (title)
         buildInputPanel();    // Set up left-side input panel
@@ -179,34 +179,56 @@ public class GUI extends JFrame {
 
    
     // update the names on the label fields for different calculation types
-    private void updateNames() {
-            if ((String) investmentTypeBox.getSelectedItem() == (String) options[0] || (String) investmentTypeBox.getSelectedItem() == (String) options[1]) {
-                amountLabel.setText("Initial Amount ($):");
-                rateLabel.setText("Interest Rate (%):");
-                yearsLabel.setText("Years:");
+    // Complete updateNames() method for GUI.java
+    // Replace your updateNames() method in GUI.java with this:
 
-            }
-            else if ((String) investmentTypeBox.getSelectedItem() == (String) options[3]) {
-                amountLabel.setText("Purchase Price ($):");
-                rateLabel.setText("Predicted Annuel Growth (%):");
-                yearsLabel.setText("Years:");
-            }
-            else if ((String) investmentTypeBox.getSelectedItem() == (String) options[4]) {
-                amountLabel.setText("Purchase Price ($):");
-                rateLabel.setText("Predicted Annuel Decrease (%):");
-                yearsLabel.setText("Years:");
-            }
-            else if ((String) investmentTypeBox.getSelectedItem() == (String) options[5]) {
-                amountLabel.setText("Initial Amount ($):");
-                rateLabel.setText("Predicted Volitility (%):");
-                yearsLabel.setText("Years:");
-            } 
-            else if ((String) investmentTypeBox.getSelectedItem() == (String) options[6]) {
-                amountLabel.setText("Nominal Value ($):");
-                rateLabel.setText("Predicted Inflation Rate (%):");
-                yearsLabel.setText("Years:");
-            }
+    private void updateNames() {
+        String selectedOption = (String) investmentTypeBox.getSelectedItem();
+        
+        if (selectedOption.equals(options[0]) || selectedOption.equals(options[1])) {
+            // Compound Interest OR Simple Interest
+            nameLabel.setText("Name (optional):");
+            amountLabel.setText("Initial Amount ($):");
+            rateLabel.setText("Interest Rate (%):");
+            yearsLabel.setText("Years:");
+        }
+        else if (selectedOption.equals(options[2])) {
+            // With Annual Contributions
+            nameLabel.setText("Annual Contribution ($):");
+            amountLabel.setText("Initial Amount ($):");
+            rateLabel.setText("Interest Rate (%):");
+            yearsLabel.setText("Years:");
+        }
+        else if (selectedOption.equals(options[3])) {
+            // Appreciating Asset
+            nameLabel.setText("Name (optional):");
+            amountLabel.setText("Purchase Price ($):");
+            rateLabel.setText("Predicted Annual Growth (%):");
+            yearsLabel.setText("Years:");
+        }
+        else if (selectedOption.equals(options[4])) {
+            // Depreciating Asset
+            nameLabel.setText("Name (optional):");
+            amountLabel.setText("Purchase Price ($):");
+            rateLabel.setText("Predicted Annual Decrease (%):");
+            yearsLabel.setText("Years:");
+        }
+        else if (selectedOption.equals(options[5])) {
+            // Simulated Crypto
+            nameLabel.setText("Name (optional):");
+            amountLabel.setText("Initial Amount ($):");
+            rateLabel.setText("Predicted Volatility (%):");
+            yearsLabel.setText("Years:");
+        } 
+        else if (selectedOption.equals(options[6])) {
+            // Inflation-adjusted Value
+            nameLabel.setText("Name (optional):");
+            amountLabel.setText("Nominal Value ($):");
+            rateLabel.setText("Predicted Inflation Rate (%):");
+            yearsLabel.setText("Years:");
+        }
     }
+
     // Handles the calculation logic and updates the result label
     private void handleCalculate() {
         String currentName = nameField.getText();
@@ -241,7 +263,30 @@ public class GUI extends JFrame {
             }
             futureValue = values.get(values.size() - 1);
             Write.storeSimpleInterest(name, principal, rate, years);
-        } else if (selected.equals(options[3])) { // Appreciating Asset
+           
+        } else if (selected.equals(options[2])) { // With Annual Contributions
+            double annualContribution;
+            try {
+                // Use name field for annual contribution
+                String contributionText = nameField.getText();
+                if (contributionText.equals("") || contributionText.equals("(default)")) {
+                    annualContribution = 0; // Default to 0 if no contribution specified
+                } else {
+                    annualContribution = Double.parseDouble(contributionText);
+                }
+            } catch (NumberFormatException e) {
+                annualContribution = 0;
+            }
+            
+            for (int i = 1; i <= years; i++) {
+                double v = InvestmentLogic.calculateWithContributions(principal, annualContribution, rate, i);
+                values.add(v);
+            }
+            futureValue = values.get(values.size() - 1);
+        }
+
+
+        else if (selected.equals(options[3])) { // Appreciating Asset
             for (int i = 1; i <= years; i++) {
                 double v = InvestmentLogic.calculateAppreciation(principal, rate, i);
                 values.add(v);
@@ -279,22 +324,70 @@ public class GUI extends JFrame {
         outputPanel.revalidate();
         outputPanel.repaint();
 
-    } catch (NumberFormatException ex) {
-        JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        storageBox.removeAllItems();
+        String[] temp = Write.getNames(true);
+        System.out.println("start");
+        for (int i = 0; i < temp.length; i++) {
+            //System.out.println(temp[i]);
+            storageBox.addItem(temp[i]);
+        }
+        storageBox.setSelectedItem(currentName);
+        loadSave();
+        //System.out.println(currentName);
+        System.out.println("end");
     }
-    
-    storageBox.removeAllItems();
-    String[] temp = Write.getNames(true);
-    System.out.println("start");
-    for (int i = 0; i < temp.length; i++) {
-        //System.out.println(temp[i]);
-    storageBox.addItem(temp[i]);
+
+
+    private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        
+        // Tools menu
+        JMenu toolsMenu = new JMenu("Tools");
+        toolsMenu.setFont(new Font("Arial", Font.PLAIN, 16));
+        
+        // Utility Calculator menu item
+        JMenuItem utilityMenuItem = new JMenuItem("Ms. Fernandez Utility Calculator");
+        utilityMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
+        utilityMenuItem.addActionListener(e -> openUtilityCalculator());
+        
+        toolsMenu.add(utilityMenuItem);
+        menuBar.add(toolsMenu);
+        
+        // Optional: Add Help menu
+        JMenu helpMenu = new JMenu("Help");
+        helpMenu.setFont(new Font("Arial", Font.PLAIN, 16));
+        
+        JMenuItem aboutMenuItem = new JMenuItem("About");
+        aboutMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
+        aboutMenuItem.addActionListener(e -> showAbout());
+        
+        helpMenu.add(aboutMenuItem);
+        menuBar.add(helpMenu);
+        
+        frame.setJMenuBar(menuBar);
     }
-    storageBox.setSelectedItem(currentName);
-    loadSave();
-    //System.out.println(currentName);
-    System.out.println("end");
-}
+
+    // Add this method to handle opening the utility calculator
+    private void openUtilityCalculator() {
+        UtilityCalculatorDialog utilityDialog = new UtilityCalculatorDialog(frame);
+        utilityDialog.setVisible(true);
+    }
+
+    // Optional: Add an about dialog
+    private void showAbout() {
+        JOptionPane.showMessageDialog(frame, 
+            "Investment Calculator for Teens\n" +
+            "Includes Ms. Fernandez Utility Calculator\n" +
+            "Version 1.0", 
+            "About", 
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+
+
 
     // Adds top and bottom panels to the main frame
     private void configureLayout() {

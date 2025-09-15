@@ -6,7 +6,7 @@ public class Main {
         //clears the storage file for testing purposes, probobly going to be removed in full version
         File f = new File("Store.txt");
         if (!f.exists()) { 
-        Write.clear();
+            Write.clear();
         }
         
         GUI gui = new GUI();

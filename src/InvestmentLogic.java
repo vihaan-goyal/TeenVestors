@@ -47,9 +47,16 @@ public class InvestmentLogic {
     }
 
     //8. Utility Per Dollar (Ms. Fernandez's formula)
-    public static int utilityPerDollar(int happiness, int frequency, double convenience, int lifestyleConvenience, int timeYears, int lifespan, int price){
-        int adjustedCost = (int)(Math.ceil(timeYears/lifespan) * price);
-        return (int)((happiness * frequency * 12) + (convenience * lifestyleConvenience))/adjustedCost;
+    public static int utilityPerDollar(int happiness, int frequency, double convenience, int lifestyleConvenience, int timeYears, int lifespan, int price) {
+        // Fix: Use double division instead of integer division
+        double adjustedCost = Math.ceil((double)timeYears / lifespan) * price;
+        
+        // Add safety check to prevent division by zero
+        if (adjustedCost == 0) {
+            return 0; // or throw an exception
+        }
+        
+        return (int)((happiness * frequency * 12) + (convenience * lifestyleConvenience)) / (int)adjustedCost;
     }
 
     

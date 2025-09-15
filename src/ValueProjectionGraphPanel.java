@@ -104,7 +104,7 @@ public class ValueProjectionGraphPanel extends JPanel {
             // Draw border around the entire panel (the full image)
             g2.setColor(Color.BLACK); // or any color you want
             g2.setStroke(new BasicStroke(5f)); // thickness of border
-            g2.drawRect(0, 0, getWidth(), getHeight());
+            g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
         }
     }
 
