@@ -181,6 +181,30 @@ public class Write {
 
     }
 
+    public static void storeAnnualContributions(String name, double annualContribution, double principal, double rate, int years) {
+        try {
+            //creates reader to read the current file
+            FileReader fr = new FileReader(filePath);
+            int i;
+            //creates string to store the current file in
+            StringBuilder sb = new StringBuilder();
+            //stores the current file in the string
+            while ((i = fr.read()) != -1) {
+                sb.append((char)i);
+            }
+            fr.close();
+            //creates the filewriter to write the file
+            FileWriter store = new FileWriter(filePath);
+            store.write(sb + "\n"  + name + " " + "AnnualContributions " + annualContribution + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateSimpleInterest(principal, rate, years));
+            store.close();
+            System.out.println("success");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+    }
+
     public static void storeAppreciation(String name, double principal, double rate, int years) {
         try {
             //creates reader to read the current file
@@ -195,7 +219,7 @@ public class Write {
             fr.close();
             //creates the filewriter to write the file
             FileWriter store = new FileWriter(filePath);
-            store.write(sb + "\n" + name + "Appreciation " + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateAppreciation(principal, rate, years));
+            store.write(sb + "\n" + name + " Appreciation" + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateAppreciation(principal, rate, years));
             store.close();
             System.out.println("success");
         } catch (IOException e) {
@@ -218,7 +242,7 @@ public class Write {
             fr.close();
             //creates the filewriter to write the file
             FileWriter store = new FileWriter(filePath);
-            store.write(sb + "\n" + name + "Appreciation " + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateDepreciation(principal, rate, years));
+            store.write(sb + "\n" + name + " Depreciation" + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateDepreciation(principal, rate, years));
             store.close();
             System.out.println("success");
         } catch (IOException e) {
@@ -242,7 +266,7 @@ public class Write {
             fr.close();
             //creates the filewriter to write the file
             FileWriter store = new FileWriter(filePath);
-            store.write(sb + "\n" + name + "Appreciation " + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.simulateCryptoValue(principal, rate, years));
+            store.write(sb + "\n" + name + " CryptoValue" + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.simulateCryptoValue(principal, rate, years));
             store.close();
             System.out.println("success");
         } catch (IOException e) {
@@ -266,7 +290,31 @@ public class Write {
             fr.close();
             //creates the filewriter to write the file
             FileWriter store = new FileWriter(filePath);
-            store.write(sb + "\n" + name + "Appreciation " + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.adjustForInflation(principal, rate, years));
+            store.write(sb + "\n" + name + " Inflation" + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.adjustForInflation(principal, rate, years));
+            store.close();
+            System.out.println("success");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void storeutility(String name, int happiness, int frequency, double convenience, int lifestyleConvenience, int timeYears, int lifespan, int price) {
+        try {
+            //creates reader to read the current file
+            FileReader fr = new FileReader(filePath);
+            int i;
+            //creates string to store the current file in
+            StringBuilder sb = new StringBuilder();
+            //stores the current file in the string
+            while ((i = fr.read()) != -1) {
+                sb.append((char)i);
+            }
+            fr.close();
+            //creates the filewriter to write the file
+            FileWriter store = new FileWriter(filePath);
+            store.write(sb + "\n" + name + " Utility" + " " + happiness + " " + frequency + " " + convenience + " " + lifestyleConvenience + " " + timeYears + " " + lifespan + " " + price + " " + InvestmentLogic.utilityPerDollar(happiness, frequency, convenience, lifestyleConvenience, timeYears, lifespan, price));
             store.close();
             System.out.println("success");
         } catch (IOException e) {

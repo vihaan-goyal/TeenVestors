@@ -1,1 +1,0 @@
-(default) CompoundInterest 10.0 0.1 10 25.937424601000025

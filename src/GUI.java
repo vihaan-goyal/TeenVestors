@@ -170,6 +170,50 @@ public class GUI extends JFrame {
         //System.out.println(fields[1] + "xxx");
         if (fields[1].equals("CompoundInterest") || fields[1].equals("SimpleInterest")) {
             //System.out.println("test");
+            investmentTypeBox.setSelectedIndex(0);
+            if (fields[1].equals("SimpleInterest")) {
+                investmentTypeBox.setSelectedIndex(1);
+            }
+            nameField.setText(fields[0]);
+            amountField.setText(fields[2]);
+            rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
+            yearsField.setText(fields[4]);
+        }
+        else if (fields[1].equals("AnnualContributions")) {
+            //System.out.println("test");
+            investmentTypeBox.setSelectedIndex(2);
+            nameField.setText(fields[0] + " " + fields[2]);
+            amountField.setText(fields[3]);
+            rateField.setText((String.valueOf((Double.parseDouble(fields[4])*100))));
+            yearsField.setText(fields[5]);
+        }
+        else if (fields[1].equals("Appreciation")) {
+            //System.out.println("test");
+            investmentTypeBox.setSelectedIndex(3);
+            nameField.setText(fields[0]);
+            amountField.setText(fields[2]);
+            rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
+            yearsField.setText(fields[4]);
+        }
+        else if (fields[1].equals("Depreciation")) {
+            //System.out.println("test");
+            investmentTypeBox.setSelectedIndex(4);
+            nameField.setText(fields[0]);
+            amountField.setText(fields[2]);
+            rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
+            yearsField.setText(fields[4]);
+        }
+        else if (fields[1].equals("CryptoValue")) {
+            //System.out.println("test");
+            investmentTypeBox.setSelectedIndex(5);
+            nameField.setText(fields[0]);
+            amountField.setText(fields[2]);
+            rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
+            yearsField.setText(fields[4]);
+        }
+        else if (fields[1].equals("Inflation")) {
+            //System.out.println("test");
+            investmentTypeBox.setSelectedIndex(6);
             nameField.setText(fields[0]);
             amountField.setText(fields[2]);
             rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
@@ -194,7 +238,7 @@ public class GUI extends JFrame {
         }
         else if (selectedOption.equals(options[2])) {
             // With Annual Contributions
-            nameLabel.setText("Annual Contribution ($):");
+            nameLabel.setText("Annual Contribution (name $):");
             amountLabel.setText("Initial Amount ($):");
             rateLabel.setText("Interest Rate (%):");
             yearsLabel.setText("Years:");
@@ -231,13 +275,13 @@ public class GUI extends JFrame {
 
     // Handles the calculation logic and updates the result label
     private void handleCalculate() {
-        String currentName = nameField.getText();
+        String currentName = nameField.getText().split(" ")[0];
     try {
         String name = nameField.getText();
         if (name.equals("")) {
             name = "(default)";
         }
-        currentName = name;
+        currentName = nameField.getText().split(" ")[0];
         double principal = Double.parseDouble(amountField.getText());
         double rate = Double.parseDouble(rateField.getText()) / 100.0;
         int years = Integer.parseInt(yearsField.getText());
@@ -268,11 +312,12 @@ public class GUI extends JFrame {
             double annualContribution;
             try {
                 // Use name field for annual contribution
-                String contributionText = nameField.getText();
-                if (contributionText.equals("") || contributionText.equals("(default)")) {
+                String[] contributionText = nameField.getText().split(" ");
+                if (contributionText[1].equals("") || contributionText[1].equals("(default)")) {
                     annualContribution = 0; // Default to 0 if no contribution specified
                 } else {
-                    annualContribution = Double.parseDouble(contributionText);
+                    annualContribution = Double.parseDouble(contributionText[1]);
+                    name = contributionText[0];
                 }
             } catch (NumberFormatException e) {
                 annualContribution = 0;
@@ -283,6 +328,7 @@ public class GUI extends JFrame {
                 values.add(v);
             }
             futureValue = values.get(values.size() - 1);
+            Write.storeAnnualContributions(name, annualContribution, principal, rate, years);;
         }
 
 
@@ -337,7 +383,7 @@ public class GUI extends JFrame {
         }
         storageBox.setSelectedItem(currentName);
         loadSave();
-        //System.out.println(currentName);
+        System.out.println(currentName);
         System.out.println("end");
     }
 
