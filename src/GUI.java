@@ -543,12 +543,6 @@ public class GUI extends JFrame {
         chatbot.setVisible(true);
     }
 
-    // NEW METHOD: Open the basic educational chatbot (fallback if no Claude API)
-    private void openBasicChatbot() {
-        ClaudeEducationalChatbot chatbot = new ClaudeEducationalChatbot(frame);
-        chatbot.setVisible(true);
-    }
-
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
