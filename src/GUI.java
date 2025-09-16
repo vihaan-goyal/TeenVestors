@@ -372,17 +372,26 @@ public class GUI extends JFrame {
             Write.storeSimpleInterest(name, principal, rate, years);
            
         } else if (selected.equals(options[2])) { // With Annual Contributions
-            double annualContribution;
+            double annualContribution = 0;
             try {
-                // Use name field for annual contribution
-                String[] contributionText = nameField.getText().split(" ");
-                if (contributionText[1].equals("") || contributionText[1].equals("(default)")) {
-                    annualContribution = 0; // Default to 0 if no contribution specified
+                // Better parsing - handle the name field input more robustly
+                String nameInput = nameField.getText().trim();
+                if (nameInput.contains(" ")) {
+                    String[] parts = nameInput.split("\\s+", 2); // Split into at most 2 parts
+                    name = parts[0];
+                    if (parts.length > 1 && !parts[1].isEmpty()) {
+                        annualContribution = Double.parseDouble(parts[1]);
+                    }
                 } else {
-                    annualContribution = Double.parseDouble(contributionText[1]);
-                    name = contributionText[0];
+                    name = nameInput;
+                    annualContribution = 0; // Default if no contribution specified
+                }
+                
+                if (name.isEmpty()) {
+                    name = "(default)";
                 }
             } catch (NumberFormatException e) {
+                // If parsing fails, use name as-is and set contribution to 0
                 annualContribution = 0;
             }
             
@@ -391,10 +400,8 @@ public class GUI extends JFrame {
                 values.add(v);
             }
             futureValue = values.get(values.size() - 1);
-            Write.storeAnnualContributions(name, annualContribution, principal, rate, years);;
+            Write.storeAnnualContributions(name, annualContribution, principal, rate, years);
         }
-
-
         else if (selected.equals(options[3])) { // Appreciating Asset
             for (int i = 1; i <= years; i++) {
                 double v = InvestmentLogic.calculateAppreciation(principal, rate, i);

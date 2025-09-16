@@ -184,16 +184,15 @@ public static String[] getNames(Boolean dupes) {
             fr.close();
             //creates the filewriter to write the file
             FileWriter store = new FileWriter(filePath);
-            store.write(sb + "\n"  + name + " " + "AnnualContributions " + annualContribution + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateSimpleInterest(principal, rate, years));
+            // FIXED: Use calculateWithContributions instead of calculateSimpleInterest
+            store.write(sb + "\n"  + name + " " + "AnnualContributions " + annualContribution + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateWithContributions(principal, annualContribution, rate, years));
             store.close();
             System.out.println("success");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
     }
-
     public static void storeAppreciation(String name, double principal, double rate, int years) {
         try {
             //creates reader to read the current file
