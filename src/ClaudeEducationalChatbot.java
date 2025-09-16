@@ -16,7 +16,7 @@ public class ClaudeEducationalChatbot extends JDialog {
     
     
     // This will read your API key from the file
-    private static final String CLAUDE_API_KEY = "your-api-key";
+    private static final String CLAUDE_API_KEY = "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";
     private static final String CLAUDE_URL = "https://api.anthropic.com/v1/messages";
     private static final String CLAUDE_VERSION = "2023-06-01";
 
