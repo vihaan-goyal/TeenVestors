@@ -16,7 +16,6 @@ public class StockCalculatorDialog extends JDialog {
     private final Color WARNING_ORANGE = new Color(243, 156, 18);
     private final Color DANGER_RED = new Color(231, 76, 60);
     private final Color DARK_GRAY = new Color(52, 73, 94);
-    private final Color LIGHT_GRAY = new Color(236, 240, 241);
     private final Color CARD_WHITE = new Color(255, 255, 255);
     
     public StockCalculatorDialog(JFrame parent) {
