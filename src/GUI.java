@@ -525,42 +525,83 @@ public class GUI extends JFrame {
         }
     }
 
+    // Method to open the utility calculator
+    private void openUtilityCalculator() {
+        UtilityCalculatorDialog utilityDialog = new UtilityCalculatorDialog(frame);
+        utilityDialog.setVisible(true);
+    }
+
+    // Method to open the stock calculator
+    private void openStockCalculator() {
+        StockCalculatorDialog stockCalc = new StockCalculatorDialog(frame);
+        stockCalc.setVisible(true);
+    }
+
+    // NEW METHOD: Open the Claude AI chatbot
+    private void openClaudeChatbot() {
+        ClaudeEducationalChatbot chatbot = new ClaudeEducationalChatbot(frame);
+        chatbot.setVisible(true);
+    }
+
+    // NEW METHOD: Open the basic educational chatbot (fallback if no Claude API)
+    private void openBasicChatbot() {
+        ClaudeEducationalChatbot chatbot = new ClaudeEducationalChatbot(frame);
+        chatbot.setVisible(true);
+    }
+
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        
+
+        // Tools Menu
         JMenu toolsMenu = new JMenu("Tools");
         toolsMenu.setFont(new Font("Arial", Font.PLAIN, 16));
         
+        // Stock Calculator
+        JMenuItem stockMenuItem = new JMenuItem("Stock Investment Calculator");
+        stockMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
+        stockMenuItem.addActionListener(e -> openStockCalculator());
+        toolsMenu.add(stockMenuItem);
+        
+        // Utility Calculator
         JMenuItem utilityMenuItem = new JMenuItem("Ms. Fernandez Utility Calculator");
         utilityMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
         utilityMenuItem.addActionListener(e -> openUtilityCalculator());
-        
         toolsMenu.add(utilityMenuItem);
+
+        toolsMenu.addSeparator(); // Visual separator
+
+        // NEW: Claude AI Learning Assistant
+        JMenuItem claudeChatMenuItem = new JMenuItem("AI Learning Assistant");
+        claudeChatMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
+        claudeChatMenuItem.addActionListener(e -> openClaudeChatbot());
+        toolsMenu.add(claudeChatMenuItem);        
+
         menuBar.add(toolsMenu);
         
+        // Help Menu
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setFont(new Font("Arial", Font.PLAIN, 16));
         
         JMenuItem aboutMenuItem = new JMenuItem("About");
         aboutMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
         aboutMenuItem.addActionListener(e -> showAbout());
-        
         helpMenu.add(aboutMenuItem);
+        
         menuBar.add(helpMenu);
         
-        frame.setJMenuBar(menuBar);
-    }
-
-    private void openUtilityCalculator() {
-        UtilityCalculatorDialog utilityDialog = new UtilityCalculatorDialog(frame);
-        utilityDialog.setVisible(true);
+        frame.setJMenuBar(menuBar); 
     }
 
     private void showAbout() {
         JOptionPane.showMessageDialog(frame, 
             "Investment Calculator for Teens\n" +
-            "Includes Ms. Fernandez Utility Calculator\n" +
-            "Version 1.0", 
+            "Features:\n" +
+            "• Investment calculations and projections\n" +
+            "• Ms. Fernandez Utility Calculator\n" +
+            "• Stock investment tools\n" +
+            "• Claude AI Learning Assistant\n" +
+            "• Educational chatbot for financial literacy\n\n" +
+            "Version 2.0 - Now with AI Learning!", 
             "About", 
             JOptionPane.INFORMATION_MESSAGE);
     }
