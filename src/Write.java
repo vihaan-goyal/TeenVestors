@@ -1,9 +1,6 @@
 //import java.io.FileWriter;
 //import java.io.IOException;
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Write {
 
@@ -24,113 +21,105 @@ public class Write {
     }
 
     public static String[] removeDupes(String[] array) {
-            int count = array.length;
-            Boolean[] stay = new Boolean[array.length];
-            for (int i=0; i < array.length-1; i++) {
-                stay[i] = true;
-                for (int j=i+1; j<array.length; j++) {
-                    if (array[i].equals(array[j])) {
-                        if (stay[i] == true) {
-                        count--;
-                        stay[i] = false;
-                        }
-                    }
-                }
-            }
-
-            stay[array.length-1] = true;
-            String[] finaly = new String[count];
-            int finCount = 0;
-
-            for (int k = 0; k < array.length; k++) {
-                if (stay[k]) {
-                    finaly[finCount] = array[k];
-                    finCount++;
-                }
-            }
+        if (array == null || array.length == 0) {
+            return new String[0];
+        }
         
-
-            System.out.println("start");
-            for (int p = 0; p < finaly.length; p++) {
-                System.out.println(finaly[p]);
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        java.util.List<String> result = new java.util.ArrayList<>();
+        
+        // Keep the last occurrence of each name (reverse order processing)
+        for (int i = array.length - 1; i >= 0; i--) {
+            if (array[i] != null && !seen.contains(array[i])) {
+                seen.add(array[i]);
+                result.add(0, array[i]); // Add to front to maintain relative order
             }
-            System.out.println("end");
-            return finaly;
-}
+        }
+        
+        return result.toArray(new String[0]);
+    } 
     
-    public static String findName(String name) {
-        try {
-            int late = 0;
-            Boolean found = false;
-        String[] names = getNames(false);
-        for (int ii = names.length-1; ii >=0; ii--) {
-            System.out.println("this name is " + names[ii]);
-            if (names[ii].equals(name) && found == false) {
-                late = ii;
-                found = true;
-            }
+public static String findName(String name) {
+    try {
+        // First get all the lines from the file
+        FileReader fr = new FileReader(filePath);
+        StringBuilder sb = new StringBuilder();
+        int i;
+        while ((i = fr.read()) != -1) {
+            sb.append((char)i);
+        }
+        fr.close();
+        
+        String[] lines = sb.toString().split("\\n");
+        
+        // Find the most recent entry with this name
+        String foundLine = null;
+        for (int lineIndex = lines.length - 1; lineIndex >= 1; lineIndex--) {
+            String line = lines[lineIndex].trim();
+            if (line.isEmpty()) continue;
             
+            // Extract the name (first field before the first space)
+            int firstSpace = line.indexOf(" ");
+            if (firstSpace > 0) {
+                String lineName = line.substring(0, firstSpace);
+                if (lineName.equals(name)) {
+                    foundLine = line;
+                    break;
+                }
+            }
         }
-        System.out.println("latest is " + late + " and the name is " + name);
-         
-            //creates reader to read the current file
-            FileReader fr = new FileReader(filePath);
-            int i;
-            //creates string to store the current file in
-            StringBuilder sb = new StringBuilder();
-            //stores the current file in the string
-            while ((i = fr.read()) != -1) {
-                sb.append((char)i);
-            }
-            fr.close();
-            String[] lines = sb.toString().split("\\n");
-            //System.out.println(lines[late+1]);
-            if (late < lines.length) {
-            return lines[late+1];
-            } else {
-                return lines[late];
-            }
-
-            } catch (IOException e) {
-            //System.out.println("An error occurred.");
-            e.printStackTrace();
-            return new String();
-            }
-    }
-
-    public static String[] getNames(Boolean dupes) {
-        try {
-            //creates reader to read the current file
-            FileReader fr = new FileReader(filePath);
-            int i;
-            //creates string to store the current file in
-            StringBuilder sb = new StringBuilder();
-            //stores the current file in the string
-            while ((i = fr.read()) != -1) {
-                sb.append((char)i);
-            }
-            fr.close();
-            String[] lines = sb.toString().split("\\n");
-            System.out.println(sb);
-            String[] output = new String[lines.length - 1];
-            for (int ii=1; ii < lines.length; ii++) {
-                if (lines[ii].indexOf(" ") >= 0) {
-                output[ii-1] = lines[ii].substring(0, lines[ii].indexOf(" "));
-            }
-            }
-            //System.out.println("success");
-            if (dupes) {
-            return removeDupes(output);
-            }
-            else {
-                return output;
-            }
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
+        
+        System.out.println("Looking for name: '" + name + "'");
+        System.out.println("Found line: '" + foundLine + "'");
+        
+        return foundLine != null ? foundLine : "";
+        
+    } catch (IOException e) {
+        System.out.println("Error in findName: " + e.getMessage());
         e.printStackTrace();
-        return new String[1];
-        }
+        return "";
     }
+}
+
+public static String[] getNames(Boolean dupes) {
+    try {
+        FileReader fr = new FileReader(filePath);
+        StringBuilder sb = new StringBuilder();
+        int i;
+        while ((i = fr.read()) != -1) {
+            sb.append((char)i);
+        }
+        fr.close();
+        
+        String[] lines = sb.toString().split("\\n");
+        java.util.List<String> namesList = new java.util.ArrayList<>();
+        
+        // Skip the first line (index 0) as it's usually empty/header
+        for (int lineIndex = 1; lineIndex < lines.length; lineIndex++) {
+            String line = lines[lineIndex].trim();
+            if (line.isEmpty()) continue;
+            
+            int firstSpace = line.indexOf(" ");
+            if (firstSpace > 0) {
+                String name = line.substring(0, firstSpace);
+                namesList.add(name);
+            }
+        }
+        
+        String[] output = namesList.toArray(new String[0]);
+        
+        if (dupes) {
+            return removeDupes(output);
+        } else {
+            return output;
+        }
+        
+    } catch (IOException e) {
+        System.out.println("Error in getNames: " + e.getMessage());
+        e.printStackTrace();
+        return new String[0];
+    }
+}
 
 
     public static void storeCompoundInterest(String name, double principal, double rate, int years) {

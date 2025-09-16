@@ -130,8 +130,33 @@ public class GUI extends JFrame {
         bottomPanel.add(outputPanel, BorderLayout.EAST);
     }
 
+    private void updateStorageBox() {
+        // Store the currently selected item
+        String currentSelection = (String) storageBox.getSelectedItem();
+        
+        // Clear and repopulate
+        storageBox.removeAllItems();
+        String[] names = Write.getNames(true);
+        
+        for (String name : names) {
+            if (name != null && !name.trim().isEmpty()) {
+                storageBox.addItem(name);
+            }
+        }
+        
+        // Try to restore the previous selection
+        if (currentSelection != null) {
+            for (int i = 0; i < storageBox.getItemCount(); i++) {
+                if (storageBox.getItemAt(i).equals(currentSelection)) {
+                    storageBox.setSelectedIndex(i);
+                    return;
+                }
+            }
+        }
+    }
+
     // Helper method to create labeled input fields
-    private JPanel createLabeledField(String labelText, JTextField textField) {
+    /*private JPanel createLabeledField(String labelText, JTextField textField) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panel.setMaximumSize(new Dimension(500, 40));
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -146,7 +171,7 @@ public class GUI extends JFrame {
         panel.add(label);
         panel.add(textField);
         return panel;
-    }
+    }*/
     // version of helper function for labels needed to be changed later
      private JPanel createLabeledField(String labelText, JTextField textField, JLabel label) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -166,58 +191,96 @@ public class GUI extends JFrame {
     }
 
     private void loadSave() {
-        String[] fields = Write.findName((String) storageBox.getSelectedItem()).split(" ");
-        //System.out.println(fields[1] + "xxx");
-        if (fields[1].equals("CompoundInterest") || fields[1].equals("SimpleInterest")) {
-            //System.out.println("test");
-            investmentTypeBox.setSelectedIndex(0);
-            if (fields[1].equals("SimpleInterest")) {
-                investmentTypeBox.setSelectedIndex(1);
+        try {
+            String selectedName = (String) storageBox.getSelectedItem();
+            if (selectedName == null || selectedName.isEmpty()) {
+                return;
             }
-            nameField.setText(fields[0]);
-            amountField.setText(fields[2]);
-            rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
-            yearsField.setText(fields[4]);
-        }
-        else if (fields[1].equals("AnnualContributions")) {
-            //System.out.println("test");
-            investmentTypeBox.setSelectedIndex(2);
-            nameField.setText(fields[0] + " " + fields[2]);
-            amountField.setText(fields[3]);
-            rateField.setText((String.valueOf((Double.parseDouble(fields[4])*100))));
-            yearsField.setText(fields[5]);
-        }
-        else if (fields[1].equals("Appreciation")) {
-            //System.out.println("test");
-            investmentTypeBox.setSelectedIndex(3);
-            nameField.setText(fields[0]);
-            amountField.setText(fields[2]);
-            rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
-            yearsField.setText(fields[4]);
-        }
-        else if (fields[1].equals("Depreciation")) {
-            //System.out.println("test");
-            investmentTypeBox.setSelectedIndex(4);
-            nameField.setText(fields[0]);
-            amountField.setText(fields[2]);
-            rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
-            yearsField.setText(fields[4]);
-        }
-        else if (fields[1].equals("CryptoValue")) {
-            //System.out.println("test");
-            investmentTypeBox.setSelectedIndex(5);
-            nameField.setText(fields[0]);
-            amountField.setText(fields[2]);
-            rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
-            yearsField.setText(fields[4]);
-        }
-        else if (fields[1].equals("Inflation")) {
-            //System.out.println("test");
-            investmentTypeBox.setSelectedIndex(6);
-            nameField.setText(fields[0]);
-            amountField.setText(fields[2]);
-            rateField.setText((String.valueOf((Double.parseDouble(fields[3])*100))));
-            yearsField.setText(fields[4]);
+            
+            String dataLine = Write.findName(selectedName);
+            if (dataLine == null || dataLine.trim().isEmpty()) {
+                return;
+            }
+            
+            String[] fields = dataLine.trim().split(" ");
+            
+            // Debug output
+            System.out.println("Selected name: " + selectedName);
+            System.out.println("Data line: " + dataLine);
+            System.out.println("Fields length: " + fields.length);
+            for (int i = 0; i < fields.length; i++) {
+                System.out.println("Field " + i + ": " + fields[i]);
+            }
+            
+            if (fields.length < 5) {
+                System.out.println("Not enough fields in data line");
+                return;
+            }
+            
+            String calculationType = fields[1];
+            
+            // Clear all fields first
+            nameField.setText("");
+            amountField.setText("");
+            rateField.setText("");
+            yearsField.setText("");
+            
+            if (calculationType.equals("CompoundInterest")) {
+                investmentTypeBox.setSelectedIndex(0);
+                nameField.setText(fields[0]);
+                amountField.setText(fields[2]);
+                rateField.setText(String.valueOf(Double.parseDouble(fields[3]) * 100));
+                yearsField.setText(fields[4]);
+            }
+            else if (calculationType.equals("SimpleInterest")) {
+                investmentTypeBox.setSelectedIndex(1);
+                nameField.setText(fields[0]);
+                amountField.setText(fields[2]);
+                rateField.setText(String.valueOf(Double.parseDouble(fields[3]) * 100));
+                yearsField.setText(fields[4]);
+            }
+            else if (calculationType.equals("AnnualContributions")) {
+                investmentTypeBox.setSelectedIndex(2);
+                nameField.setText(fields[0] + " " + fields[2]);
+                amountField.setText(fields[3]);
+                rateField.setText(String.valueOf(Double.parseDouble(fields[4]) * 100));
+                yearsField.setText(fields[5]);
+            }
+            else if (calculationType.equals("Appreciation")) {
+                investmentTypeBox.setSelectedIndex(3);
+                nameField.setText(fields[0]);
+                amountField.setText(fields[2]);
+                rateField.setText(String.valueOf(Double.parseDouble(fields[3]) * 100));
+                yearsField.setText(fields[4]);
+            }
+            else if (calculationType.equals("Depreciation")) {
+                investmentTypeBox.setSelectedIndex(4);
+                nameField.setText(fields[0]);
+                amountField.setText(fields[2]);
+                rateField.setText(String.valueOf(Double.parseDouble(fields[3]) * 100));
+                yearsField.setText(fields[4]);
+            }
+            else if (calculationType.equals("CryptoValue")) {
+                investmentTypeBox.setSelectedIndex(5);
+                nameField.setText(fields[0]);
+                amountField.setText(fields[2]);
+                rateField.setText(String.valueOf(Double.parseDouble(fields[3]) * 100));
+                yearsField.setText(fields[4]);
+            }
+            else if (calculationType.equals("Inflation")) {
+                investmentTypeBox.setSelectedIndex(6);
+                nameField.setText(fields[0]);
+                amountField.setText(fields[2]);
+                rateField.setText(String.valueOf(Double.parseDouble(fields[3]) * 100));
+                yearsField.setText(fields[4]);
+            }
+            
+            // Update field labels based on selection
+            updateNames();
+            
+        } catch (Exception e) {
+            System.out.println("Error in loadSave: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -374,17 +437,16 @@ public class GUI extends JFrame {
             JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
         }
         
-        storageBox.removeAllItems();
-        String[] temp = Write.getNames(true);
-        System.out.println("start");
-        for (int i = 0; i < temp.length; i++) {
-            //System.out.println(temp[i]);
-            storageBox.addItem(temp[i]);
+        updateStorageBox();
+        
+        // Set the current name as selected if it exists in the dropdown
+        String nameToSelect = currentName.isEmpty() ? "(default)" : currentName;
+        for (int i = 0; i < storageBox.getItemCount(); i++) {
+            if (storageBox.getItemAt(i).equals(nameToSelect)) {
+                storageBox.setSelectedIndex(i);
+                break;
+            }
         }
-        storageBox.setSelectedItem(currentName);
-        loadSave();
-        System.out.println(currentName);
-        System.out.println("end");
     }
 
 
