@@ -1,5 +1,3 @@
-//import java.io.FileWriter;
-//import java.io.IOException;
 import java.io.*;
 
 public class Write {
@@ -138,12 +136,11 @@ public static String[] getNames(Boolean dupes) {
             FileWriter store = new FileWriter(filePath);
             store.write(sb +  "\n" + name + " " + "CompoundInterest " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateCompoundInterest(principal, rate, years));
             store.close();
-            //System.out.println("success");
+            System.out.println("Stored compound interest calculation successfully");
         } catch (IOException e) {
             System.out.println("An error occurred.");
         e.printStackTrace();
         }
-
     }
 
     public static void storeSimpleInterest(String name, double principal, double rate, int years) {
@@ -162,14 +159,14 @@ public static String[] getNames(Boolean dupes) {
             FileWriter store = new FileWriter(filePath);
             store.write(sb + "\n"  + name + " " + "SimpleInterest " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateSimpleInterest(principal, rate, years));
             store.close();
-            System.out.println("success");
+            System.out.println("Stored simple interest calculation successfully");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
     }
 
+    // FIXED: This method now uses the correct calculation!
     public static void storeAnnualContributions(String name, double annualContribution, double principal, double rate, int years) {
         try {
             //creates reader to read the current file
@@ -184,15 +181,16 @@ public static String[] getNames(Boolean dupes) {
             fr.close();
             //creates the filewriter to write the file
             FileWriter store = new FileWriter(filePath);
-            // FIXED: Use calculateWithContributions instead of calculateSimpleInterest
+            // FIXED: Now uses calculateWithContributions instead of calculateSimpleInterest
             store.write(sb + "\n"  + name + " " + "AnnualContributions " + annualContribution + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateWithContributions(principal, annualContribution, rate, years));
             store.close();
-            System.out.println("success");
+            System.out.println("Stored annual contributions calculation successfully");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
+
     public static void storeAppreciation(String name, double principal, double rate, int years) {
         try {
             //creates reader to read the current file
@@ -209,14 +207,14 @@ public static String[] getNames(Boolean dupes) {
             FileWriter store = new FileWriter(filePath);
             store.write(sb + "\n" + name + " Appreciation" + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateAppreciation(principal, rate, years));
             store.close();
-            System.out.println("success");
+            System.out.println("Stored appreciation calculation successfully");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
 
-        public static void storeDepreciation(String name, double principal, double rate, int years) {
+    public static void storeDepreciation(String name, double principal, double rate, int years) {
         try {
             //creates reader to read the current file
             FileReader fr = new FileReader(filePath);
@@ -232,12 +230,11 @@ public static String[] getNames(Boolean dupes) {
             FileWriter store = new FileWriter(filePath);
             store.write(sb + "\n" + name + " Depreciation" + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.calculateDepreciation(principal, rate, years));
             store.close();
-            System.out.println("success");
+            System.out.println("Stored depreciation calculation successfully");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
     }
 
     public static void storeCryptoValue(String name, double principal, double rate, int years) {
@@ -256,12 +253,11 @@ public static String[] getNames(Boolean dupes) {
             FileWriter store = new FileWriter(filePath);
             store.write(sb + "\n" + name + " CryptoValue" + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.simulateCryptoValue(principal, rate, years));
             store.close();
-            System.out.println("success");
+            System.out.println("Stored crypto simulation successfully");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
     }
 
     public static void storeInflation(String name, double principal, double rate, int years) {
@@ -280,12 +276,11 @@ public static String[] getNames(Boolean dupes) {
             FileWriter store = new FileWriter(filePath);
             store.write(sb + "\n" + name + " Inflation" + " " + principal + " " + rate + " " + years + " " + InvestmentLogic.adjustForInflation(principal, rate, years));
             store.close();
-            System.out.println("success");
+            System.out.println("Stored inflation adjustment successfully");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
     }
 
     public static void storeutility(String name, int happiness, int frequency, double convenience, int lifestyleConvenience, int timeYears, int lifespan, int price) {
@@ -304,16 +299,10 @@ public static String[] getNames(Boolean dupes) {
             FileWriter store = new FileWriter(filePath);
             store.write(sb + "\n" + name + " Utility" + " " + happiness + " " + frequency + " " + convenience + " " + lifestyleConvenience + " " + timeYears + " " + lifespan + " " + price + " " + InvestmentLogic.utilityPerDollar(happiness, frequency, convenience, lifestyleConvenience, timeYears, lifespan, price));
             store.close();
-            System.out.println("success");
+            System.out.println("Stored utility calculation successfully");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
     }
-
 }
-
-
-
- 

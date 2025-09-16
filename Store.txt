@@ -1,6 +1,3 @@
 
 (default) CompoundInterest 10.0 0.1 10 25.937424601000025
-SI SimpleInterest 10.0 0.08 5 14.0
-ANC AnnualContributions 0.0 10.0 0.08 9 19.99004627104433
-SI SimpleInterest 10.0 0.08 5 14.0
-ANC AnnualContributions 0.0 10.0 0.08 9 19.99004627104433
+Vihaan CompoundInterest 67.0 0.05 20 177.77094624467628
