@@ -70,14 +70,14 @@ public class StockCalculatorDialog extends JDialog {
                 try {
                     boolean apiWorking = get();
                     if (apiWorking) {
-                        apiStatusLabel.setText("✓ Real-time prices available");
+                        apiStatusLabel.setText("Real-time prices available");
                         apiStatusLabel.setForeground(new Color(76, 175, 80));
                     } else {
-                        apiStatusLabel.setText("⚠ Using estimated prices (API limit reached)");
+                        apiStatusLabel.setText("Using estimated prices (API limit reached)");
                         apiStatusLabel.setForeground(new Color(255, 152, 0));
                     }
                 } catch (Exception e) {
-                    apiStatusLabel.setText("⚠ Using estimated prices (offline mode)");
+                    apiStatusLabel.setText("Using estimated prices (offline mode)");
                     apiStatusLabel.setForeground(new Color(255, 152, 0));
                 }
             }

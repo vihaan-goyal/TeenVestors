@@ -30,7 +30,6 @@ public class GUI extends JFrame {
 
     public GUI() {
         initFrame();
-        createMenuBar();
         initPanels();
         buildTopPanel();
         buildInputPanel();
@@ -655,64 +654,7 @@ public class GUI extends JFrame {
         ClaudeEducationalChatbot chatbot = new ClaudeEducationalChatbot(frame);
         chatbot.setVisible(true);
     }
-
-    private void createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-
-        // Tools Menu (keeping this for compatibility)
-        JMenu toolsMenu = new JMenu("Tools");
-        toolsMenu.setFont(new Font("Arial", Font.PLAIN, 16));
-        
-        // Stock Calculator
-        JMenuItem stockMenuItem = new JMenuItem("Stock Investment Calculator");
-        stockMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
-        stockMenuItem.addActionListener(e -> openStockCalculator());
-        toolsMenu.add(stockMenuItem);
-        
-        // Utility Calculator
-        JMenuItem utilityMenuItem = new JMenuItem("Ms. Fernandez Utility Calculator");
-        utilityMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
-        utilityMenuItem.addActionListener(e -> openUtilityCalculator());
-        toolsMenu.add(utilityMenuItem);
-
-        toolsMenu.addSeparator(); // Visual separator
-
-        // Claude AI Learning Assistant
-        JMenuItem claudeChatMenuItem = new JMenuItem("AI Learning Assistant");
-        claudeChatMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
-        claudeChatMenuItem.addActionListener(e -> openClaudeChatbot());
-        toolsMenu.add(claudeChatMenuItem);        
-
-        menuBar.add(toolsMenu);
-        
-        // Help Menu
-        JMenu helpMenu = new JMenu("Help");
-        helpMenu.setFont(new Font("Arial", Font.PLAIN, 16));
-        
-        JMenuItem aboutMenuItem = new JMenuItem("About");
-        aboutMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
-        aboutMenuItem.addActionListener(e -> showAbout());
-        helpMenu.add(aboutMenuItem);
-        
-        menuBar.add(helpMenu);
-        
-        frame.setJMenuBar(menuBar); 
-    }
-
-    private void showAbout() {
-        JOptionPane.showMessageDialog(frame, 
-            "Investment Calculator for Teens\n" +
-            "Features:\n" +
-            "• Investment calculations and projections\n" +
-            "• Ms. Fernandez Utility Calculator\n" +
-            "• Stock investment tools\n" +
-            "• AI Learning Assistant\n" +
-            "• Educational chatbot for financial literacy\n\n" +
-            "Version 2.0 - Now with AI Learning!", 
-            "About", 
-            JOptionPane.INFORMATION_MESSAGE);
-    }
-
+    
     private void configureLayout() {
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(bottomPanel, BorderLayout.CENTER);
