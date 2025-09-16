@@ -9,8 +9,10 @@ public class ValueProjectionGraphPanel extends JPanel {
     public ValueProjectionGraphPanel(List<Double> values, int highlightYear) {
         this.values = values;
         this.highlightYear = highlightYear;
-        setPreferredSize(new Dimension(600, 400));
+        setPreferredSize(new Dimension(700, 400)); // Made larger
         setBackground(Color.WHITE);
+        // Add some margin to prevent clipping
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // Reduced border
     }
 
     @Override
@@ -21,10 +23,24 @@ public class ValueProjectionGraphPanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int w = getWidth();
-        int h = getHeight();
-        int padding = 80; // Increased padding to fit better labels
+        // Get the actual drawing area (excluding border insets)
+        Insets insets = getInsets();
+        int w = getWidth() - insets.left - insets.right;
+        int h = getHeight() - insets.top - insets.bottom;
+        int offsetX = insets.left;
+        int offsetY = insets.top;
+        
+        // Ensure minimum size
+        if (w < 100 || h < 100) return;
+        
+        int padding = 80; // Increased padding for better label space
         int years = values.size() - 1;
+
+        // Ensure we have enough space for the graph
+        int graphWidth = w - 2 * padding;
+        int graphHeight = h - 2 * padding;
+        
+        if (graphWidth < 50 || graphHeight < 50) return;
 
         double min = values.stream().min(Double::compareTo).orElse(0.0);
         double max = values.stream().max(Double::compareTo).orElse(1.0);
@@ -37,86 +53,105 @@ public class ValueProjectionGraphPanel extends JPanel {
         double[] yTicks = yAxisInfo.ticks;
 
         // Background grid lines
-        g2.setColor(new Color(230, 230, 230));
+        g2.setColor(new Color(240, 240, 240));
+        g2.setStroke(new BasicStroke(0.5f));
         
         // Y-axis grid lines (based on smart ticks)
         for (double tickValue : yTicks) {
-            int y = h - padding - (int) ((tickValue - yMin) / (yMax - yMin) * (h - 2 * padding));
-            g2.drawLine(padding, y, w - padding, y);
+            int y = offsetY + h - padding - (int) ((tickValue - yMin) / (yMax - yMin) * graphHeight);
+            g2.drawLine(offsetX + padding, y, offsetX + w - padding, y);
         }
 
         // X-axis grid lines
-        int numXTicks = Math.min(years, 10);
+        int numXTicks = Math.min(years, 10); // Back to more tick marks for better detail
         for (int i = 0; i <= numXTicks; i++) {
-            int x = padding + (int)((i / (double) numXTicks) * (w - 2 * padding));
-            g2.drawLine(x, padding, x, h - padding);
+            int x = offsetX + padding + (int)((i / (double) numXTicks) * graphWidth);
+            g2.drawLine(x, offsetY + padding, x, offsetY + h - padding);
         }
 
-        // Axes
+        // Main axes
         g2.setColor(Color.DARK_GRAY);
         g2.setStroke(new BasicStroke(2f));
-        g2.drawLine(padding, h - padding, w - padding, h - padding);
-        g2.drawLine(padding, padding, padding, h - padding);
+        g2.drawLine(offsetX + padding, offsetY + h - padding, offsetX + w - padding, offsetY + h - padding);
+        g2.drawLine(offsetX + padding, offsetY + padding, offsetX + padding, offsetY + h - padding);
 
         // Labels
-        g2.setFont(new Font("SansSerif", Font.BOLD, 14));
-        g2.drawString("Year", w / 2 - 20, h - 15);
-        g2.drawString("Value ($)", 10, padding - 10);
+        g2.setFont(new Font("SansSerif", Font.BOLD, 14)); // Larger font
+        FontMetrics fm = g2.getFontMetrics();
+        
+        // X-axis label
+        String xLabel = "Year";
+        int xLabelWidth = fm.stringWidth(xLabel);
+        g2.drawString(xLabel, offsetX + (w - xLabelWidth) / 2, offsetY + h - 10);
+        
+        // Y-axis label
+        String yLabel = "Value ($)";
+        g2.drawString(yLabel, offsetX + 10, offsetY + 20);
 
         // X-axis ticks and labels
-        g2.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 12)); // Larger tick font
+        fm = g2.getFontMetrics();
+        
         for (int i = 0; i <= numXTicks; i++) {
             int year = i * years / numXTicks;
-            int x = padding + (w - 2 * padding) * year / years;
-            g2.drawLine(x, h - padding, x, h - padding + 6);
-            g2.drawString(String.valueOf(year), x - 10, h - padding + 20);
+            int x = offsetX + padding + graphWidth * year / years;
+            g2.drawLine(x, offsetY + h - padding, x, offsetY + h - padding + 5);
+            
+            String yearLabel = String.valueOf(year);
+            int labelWidth = fm.stringWidth(yearLabel);
+            g2.drawString(yearLabel, x - labelWidth/2, offsetY + h - padding + 20);
         }
 
         // Y-axis ticks and labels (using smart ticks)
         for (double tickValue : yTicks) {
-            int y = h - padding - (int) ((tickValue - yMin) / (yMax - yMin) * (h - 2 * padding));
-            g2.drawLine(padding - 6, y, padding, y);
+            int y = offsetY + h - padding - (int) ((tickValue - yMin) / (yMax - yMin) * graphHeight);
+            g2.drawLine(offsetX + padding - 5, y, offsetX + padding, y);
             
             // Format the label based on the value size
             String label = formatCurrency(tickValue);
-            FontMetrics fm = g2.getFontMetrics();
             int labelWidth = fm.stringWidth(label);
-            g2.drawString(label, padding - labelWidth - 10, y + 5);
+            g2.drawString(label, offsetX + padding - labelWidth - 10, y + 5);
         }
 
         // Line graph (adjusted for new Y range)
         g2.setColor(new Color(33, 150, 243)); // Nice blue
         g2.setStroke(new BasicStroke(2.5f));
         for (int i = 0; i < years; i++) {
-            int x1 = padding + (w - 2 * padding) * i / years;
-            int y1 = h - padding - (int) ((values.get(i) - yMin) / (yMax - yMin) * (h - 2 * padding));
-            int x2 = padding + (w - 2 * padding) * (i + 1) / years;
-            int y2 = h - padding - (int) ((values.get(i + 1) - yMin) / (yMax - yMin) * (h - 2 * padding));
+            int x1 = offsetX + padding + graphWidth * i / years;
+            int y1 = offsetY + h - padding - (int) ((values.get(i) - yMin) / (yMax - yMin) * graphHeight);
+            int x2 = offsetX + padding + graphWidth * (i + 1) / years;
+            int y2 = offsetY + h - padding - (int) ((values.get(i + 1) - yMin) / (yMax - yMin) * graphHeight);
             g2.drawLine(x1, y1, x2, y2);
         }
 
         // Highlight year (adjusted for new Y range)
         if (highlightYear >= 0 && highlightYear < values.size()) {
-            int x = padding + (w - 2 * padding) * highlightYear / years;
-            int y = h - padding - (int) ((values.get(highlightYear) - yMin) / (yMax - yMin) * (h - 2 * padding));
+            int x = offsetX + padding + graphWidth * highlightYear / years;
+            int y = offsetY + h - padding - (int) ((values.get(highlightYear) - yMin) / (yMax - yMin) * graphHeight);
 
-            g2.setColor(new Color(244, 67, 54)); // Fancy red
-            g2.fillOval(x - 6, y - 6, 12, 12);
+            g2.setColor(new Color(244, 67, 54)); // Red
+            g2.fillOval(x - 5, y - 5, 10, 10);
 
-            g2.setFont(new Font("SansSerif", Font.BOLD, 14));
-            g2.setColor(new Color(0, 0, 0, 180)); // Shadow
+            g2.setFont(new Font("SansSerif", Font.BOLD, 11));
+            g2.setColor(Color.BLACK);
 
             String labelText = String.format("Year %d: %s", highlightYear, formatCurrency(values.get(highlightYear)));
-            FontMetrics fm = g2.getFontMetrics();
-            int labelWidth = fm.stringWidth(labelText);
+            FontMetrics labelFm = g2.getFontMetrics();
+            int labelWidth = labelFm.stringWidth(labelText);
 
-            g2.drawString(labelText, x - labelWidth/2, y - 9);
+            // Position label to avoid clipping
+            int labelX = x - labelWidth/2;
+            int labelY = y - 10;
+            
+            // Adjust if label would go off screen
+            if (labelX < offsetX + padding) labelX = offsetX + padding;
+            if (labelX + labelWidth > offsetX + w - padding) labelX = offsetX + w - padding - labelWidth;
+            if (labelY < offsetY + padding + 15) labelY = y + 20;
+
+            g2.drawString(labelText, labelX, labelY);
         }
-                
-        // Draw border around the entire panel
-        g2.setColor(Color.BLACK);
-        g2.setStroke(new BasicStroke(5f));
-        g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+        
+        // Remove the thick border - let the panel handle borders
     }
 
     // Helper class to store Y-axis information
@@ -140,7 +175,7 @@ public class ValueProjectionGraphPanel extends JPanel {
         double yMax = dataMax * 1.1;
         
         // Calculate a nice tick interval based on the full range
-        // Aim for 5-7 ticks (not too many to avoid crowding)
+        // Aim for 5-6 ticks (not too many to avoid crowding)
         double rawStep = yMax / 5; 
         
         // Round to a "nice" number
@@ -160,7 +195,7 @@ public class ValueProjectionGraphPanel extends JPanel {
         tickList = new java.util.ArrayList<>(uniqueTicks);
         
         // If we have too many ticks, thin them out
-        while (tickList.size() > 8) {
+        while (tickList.size() > 6) {
             java.util.List<Double> newTickList = new java.util.ArrayList<>();
             for (int i = 0; i < tickList.size(); i += 2) {
                 newTickList.add(tickList.get(i));

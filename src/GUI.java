@@ -5,7 +5,7 @@ import java.util.Locale;
 
 public class GUI extends JFrame {
     private JFrame frame;
-    private JPanel topPanel, bottomPanel, inputPanel, outputPanel;
+    private JPanel topPanel, bottomPanel, inputPanel, outputPanel, toolsPanel;
     private JTextField nameField, amountField, rateField, yearsField, contributionField;
     private JLabel resultLabel;
     private JComboBox<String> investmentTypeBox;
@@ -16,6 +16,7 @@ public class GUI extends JFrame {
     private JLabel yearsLabel = new JLabel();
     private JLabel contributionLabel = new JLabel();
     private JPanel contributionPanel;
+    private JPanel graphArea;
 
     String[] options = {
         "Compound Interest",
@@ -34,6 +35,7 @@ public class GUI extends JFrame {
         buildTopPanel();
         buildInputPanel();
         buildOutputPanel();
+        buildToolsPanel(); // New tools panel
         buildBottomPanel();
         configureLayout();
     }
@@ -50,6 +52,7 @@ public class GUI extends JFrame {
         bottomPanel = new JPanel(new BorderLayout());
         inputPanel = new JPanel();
         outputPanel = new JPanel();
+        toolsPanel = new JPanel(); // New tools panel
     }
 
     private void buildTopPanel() {
@@ -165,7 +168,7 @@ public class GUI extends JFrame {
 
     private void buildOutputPanel() {
         outputPanel.setBackground(Color.WHITE);
-        outputPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        outputPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 20, 30)); // Reduced bottom padding
         outputPanel.setLayout(new BorderLayout());
 
         // Results section
@@ -179,8 +182,8 @@ public class GUI extends JFrame {
         
         outputPanel.add(resultsHeader, BorderLayout.NORTH);
         
-        // Placeholder for graph
-        JPanel graphArea = new JPanel();
+        // Graph area (made smaller)
+        graphArea = new JPanel();
         graphArea.setBackground(Color.WHITE);
         graphArea.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(new Color(70, 130, 180), 2),
@@ -189,7 +192,119 @@ public class GUI extends JFrame {
             new Font("Arial", Font.BOLD, 16),
             new Color(70, 130, 180)
         ));
+        graphArea.setPreferredSize(new Dimension(600, 300)); // Made smaller to make room for tools
         outputPanel.add(graphArea, BorderLayout.CENTER);
+    }
+
+    // NEW: Build the prominent tools panel
+    private void buildToolsPanel() {
+        toolsPanel.setBackground(new Color(245, 245, 250)); // Light background
+        toolsPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(2, 0, 0, 0, new Color(70, 130, 180)),
+            BorderFactory.createEmptyBorder(25, 30, 25, 30)
+        ));
+        toolsPanel.setLayout(new BorderLayout());
+
+        // Tools title
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.setOpaque(false);
+        JLabel toolsTitle = new JLabel("Additional Investment Tools");
+        toolsTitle.setFont(new Font("Arial", Font.BOLD, 22));
+        toolsTitle.setForeground(new Color(25, 25, 112));
+        titlePanel.add(toolsTitle);
+        
+        // Tools buttons container
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 15));
+        buttonsPanel.setOpaque(false);
+        
+        // Stock Calculator Button
+        JButton stockButton = createToolButton(
+            "Stock Investment Calculator", 
+            "Explore investing in popular stocks like Apple, Tesla, and more!",
+            new Color(34, 139, 34), // Forest green
+            e -> openStockCalculator()
+        );
+        
+        // Utility Calculator Button  
+        JButton utilityButton = createToolButton(
+            "Ms. Fernandez Utility Calculator",
+            "Calculate the value and utility of purchases before buying!",
+            new Color(255, 140, 0), // Dark orange
+            e -> openUtilityCalculator()
+        );
+        
+        // AI Learning Assistant Button
+        JButton aiButton = createToolButton(
+            "AI Learning Assistant",
+            "Chat with AI to learn about investing, compound interest, and more!",
+            new Color(138, 43, 226), // Blue violet
+            e -> openClaudeChatbot()
+        );
+
+        buttonsPanel.add(stockButton);
+        buttonsPanel.add(utilityButton);
+        buttonsPanel.add(aiButton);
+        
+        toolsPanel.add(titlePanel, BorderLayout.NORTH);
+        toolsPanel.add(buttonsPanel, BorderLayout.CENTER);
+        
+        // Add a subtle description
+        JLabel description = new JLabel(
+            "<html><div style='text-align:center; color:#666666; font-style:italic;'>" +
+            "Expand your financial knowledge with these interactive tools designed specifically for teens!" +
+            "</div></html>"
+        );
+        description.setFont(new Font("Arial", Font.PLAIN, 13));
+        description.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        JPanel descPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        descPanel.setOpaque(false);
+        descPanel.add(description);
+        toolsPanel.add(descPanel, BorderLayout.SOUTH);
+    }
+
+    // Helper method to create attractive tool buttons
+    private JButton createToolButton(String title, String description, Color color, java.awt.event.ActionListener action) {
+        JButton button = new JButton();
+        button.setLayout(new BorderLayout());
+        button.setPreferredSize(new Dimension(280, 90));
+        button.setBackground(color);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createRaisedBevelBorder(),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.addActionListener(action);
+        
+        // Title label
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        // Description label
+        JLabel descLabel = new JLabel("<html><div style='text-align:center;'>" + description + "</div></html>");
+        descLabel.setFont(new Font("Arial", Font.PLAIN, 11));
+        descLabel.setForeground(new Color(240, 240, 240));
+        descLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        button.add(titleLabel, BorderLayout.NORTH);
+        button.add(descLabel, BorderLayout.CENTER);
+        
+        // Add hover effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            Color originalColor = color;
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(color.brighter());
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(originalColor);
+            }
+        });
+        
+        return button;
     }
 
     private void buildBottomPanel() {
@@ -197,10 +312,16 @@ public class GUI extends JFrame {
         int panelHeight = screenSize.height - 160; // Account for title and menu
         
         inputPanel.setPreferredSize(new Dimension(500, panelHeight)); // Fixed width
-        outputPanel.setPreferredSize(new Dimension(screenSize.width - 500, panelHeight));
+        
+        // Create a container for output and tools
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.add(outputPanel, BorderLayout.CENTER);
+        rightPanel.add(toolsPanel, BorderLayout.SOUTH); // Add tools panel at bottom
+        
+        rightPanel.setPreferredSize(new Dimension(screenSize.width - 500, panelHeight));
 
         bottomPanel.add(inputPanel, BorderLayout.WEST);
-        bottomPanel.add(outputPanel, BorderLayout.CENTER);
+        bottomPanel.add(rightPanel, BorderLayout.CENTER);
     }
 
     // Helper method to create structured sections
@@ -496,19 +617,11 @@ public class GUI extends JFrame {
             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
             resultLabel.setText("Future Value: " + currencyFormat.format(futureValue));
 
-            // Show graph in outputPanel
-            outputPanel.removeAll();
-            
-            // Results header
-            JPanel resultsHeader = new JPanel(new FlowLayout(FlowLayout.CENTER));
-            resultsHeader.setOpaque(false);
-            resultsHeader.add(resultLabel);
-            outputPanel.add(resultsHeader, BorderLayout.NORTH);
-            
-            // Graph
-            outputPanel.add(new ValueProjectionGraphPanel(values, years), BorderLayout.CENTER);
-            outputPanel.revalidate();
-            outputPanel.repaint();
+            // Show graph in graphArea
+            graphArea.removeAll();
+            graphArea.add(new ValueProjectionGraphPanel(values, years), BorderLayout.CENTER);
+            graphArea.revalidate();
+            graphArea.repaint();
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -537,7 +650,7 @@ public class GUI extends JFrame {
         stockCalc.setVisible(true);
     }
 
-    // NEW METHOD: Open the Claude AI chatbot
+    // Method to open the Claude AI chatbot
     private void openClaudeChatbot() {
         ClaudeEducationalChatbot chatbot = new ClaudeEducationalChatbot(frame);
         chatbot.setVisible(true);
@@ -546,7 +659,7 @@ public class GUI extends JFrame {
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        // Tools Menu
+        // Tools Menu (keeping this for compatibility)
         JMenu toolsMenu = new JMenu("Tools");
         toolsMenu.setFont(new Font("Arial", Font.PLAIN, 16));
         
@@ -564,7 +677,7 @@ public class GUI extends JFrame {
 
         toolsMenu.addSeparator(); // Visual separator
 
-        // NEW: Claude AI Learning Assistant
+        // Claude AI Learning Assistant
         JMenuItem claudeChatMenuItem = new JMenuItem("AI Learning Assistant");
         claudeChatMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
         claudeChatMenuItem.addActionListener(e -> openClaudeChatbot());
@@ -593,7 +706,7 @@ public class GUI extends JFrame {
             "• Investment calculations and projections\n" +
             "• Ms. Fernandez Utility Calculator\n" +
             "• Stock investment tools\n" +
-            "• Claude AI Learning Assistant\n" +
+            "• AI Learning Assistant\n" +
             "• Educational chatbot for financial literacy\n\n" +
             "Version 2.0 - Now with AI Learning!", 
             "About", 
