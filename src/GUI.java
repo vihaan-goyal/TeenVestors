@@ -5,7 +5,7 @@ import java.util.Locale;
 
 public class GUI extends JFrame {
     private JFrame frame;
-    private JPanel topPanel, bottomPanel, inputPanel, outputPanel, toolsPanel;
+    private JPanel topPanel, bottomPanel, inputPanel, outputPanel;
     private JTextField nameField, amountField, rateField, yearsField, contributionField;
     private JLabel resultLabel;
     private JComboBox<String> investmentTypeBox;
@@ -16,7 +16,6 @@ public class GUI extends JFrame {
     private JLabel yearsLabel = new JLabel();
     private JLabel contributionLabel = new JLabel();
     private JPanel contributionPanel;
-    private JPanel graphArea;
 
     String[] options = {
         "Compound Interest",
@@ -34,7 +33,6 @@ public class GUI extends JFrame {
         buildTopPanel();
         buildInputPanel();
         buildOutputPanel();
-        buildToolsPanel(); // New tools panel
         buildBottomPanel();
         configureLayout();
     }
@@ -51,18 +49,80 @@ public class GUI extends JFrame {
         bottomPanel = new JPanel(new BorderLayout());
         inputPanel = new JPanel();
         outputPanel = new JPanel();
-        toolsPanel = new JPanel(); // New tools panel
     }
 
     private void buildTopPanel() {
         topPanel.setBackground(new Color(70, 130, 180)); // Steel blue
-        topPanel.setPreferredSize(new Dimension(100, 120));
+        topPanel.setPreferredSize(new Dimension(100, 160));
         topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, new Color(25, 25, 112))); // Navy border
+        topPanel.setLayout(new BorderLayout());
 
+        // Title
+        JPanel titleContainer = new JPanel();
+        titleContainer.setOpaque(false);
         JLabel title = new JLabel("Investment Calculator for Teens");
         title.setFont(new Font("Verdana", Font.BOLD, 48));
         title.setForeground(Color.WHITE);
-        topPanel.add(title);
+        titleContainer.add(title);
+        
+        // Button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setOpaque(false);
+        
+        // Stock Calculator Button
+        JButton stockButton = new JButton("Stock Calculator");
+        stockButton.setFont(new Font("Arial", Font.BOLD, 16));
+        stockButton.setBackground(new Color(195, 58, 25));
+        stockButton.setForeground(new Color(0, 0, 0));
+        stockButton.setPreferredSize(new Dimension(200, 40));
+        stockButton.setFocusPainted(false);
+        stockButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        stockButton.setToolTipText("<html><b>Stock Calculator:</b> Learn about investing in companies like Apple, Tesla, and Google!<br>" +
+                                   "See how stocks can grow your money over time.</html>");
+        stockButton.addActionListener(e -> openStockCalculator());
+        
+        // Utility Calculator Button
+        JButton utilityButton = new JButton("Utility Calculator");
+        utilityButton.setFont(new Font("Arial", Font.BOLD, 16));
+        utilityButton.setBackground(new Color(170, 255, 144));
+        utilityButton.setForeground(new Color(0, 0, 0));
+        utilityButton.setPreferredSize(new Dimension(200, 40));
+        utilityButton.setFocusPainted(false);
+        utilityButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        utilityButton.setToolTipText("<html><b>Utility Calculator:</b> Decide if something is worth buying!<br>" +
+                                     "Calculate the value you get per dollar spent.</html>");
+        utilityButton.addActionListener(e -> openUtilityCalculator());
+        
+        // AI Learning Assistant Button
+        JButton aiButton = new JButton("AI Learning Assistant");
+        aiButton.setFont(new Font("Arial", Font.BOLD, 16));
+        aiButton.setBackground(new Color(138, 43, 226));
+        aiButton.setForeground(Color.WHITE);
+        aiButton.setPreferredSize(new Dimension(220, 40));
+        aiButton.setFocusPainted(false);
+        aiButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        aiButton.setToolTipText("<html><b>AI Learning Assistant:</b> Chat with AI to learn about investing!<br>" +
+                                "Ask questions and get personalized financial education.</html>");
+        aiButton.addActionListener(e -> openClaudeChatbot());
+        
+        // About Button
+        JButton aboutButton = new JButton("About");
+        aboutButton.setFont(new Font("Arial", Font.BOLD, 16));
+        aboutButton.setBackground(new Color(218,165,32));
+        aboutButton.setForeground(new Color(0, 0, 0));
+        aboutButton.setPreferredSize(new Dimension(120, 40));
+        aboutButton.setFocusPainted(false);
+        aboutButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        aboutButton.setToolTipText("<html><b>About:</b> Learn more about this calculator and its features.</html>");
+        aboutButton.addActionListener(e -> showAbout());
+        
+        buttonPanel.add(stockButton);
+        buttonPanel.add(utilityButton);
+        buttonPanel.add(aiButton);
+        buttonPanel.add(aboutButton);
+        
+        topPanel.add(titleContainer, BorderLayout.CENTER);
+        topPanel.add(buttonPanel, BorderLayout.SOUTH);
     }
 
     private void buildInputPanel() {
@@ -85,6 +145,8 @@ public class GUI extends JFrame {
         investmentTypeBox.setPreferredSize(new Dimension(350, 35));
         investmentTypeBox.setMaximumSize(new Dimension(350, 35));
         investmentTypeBox.addActionListener(e -> updateFieldsVisibility());
+        investmentTypeBox.setToolTipText("<html><b>Investment Type:</b> Different ways money can grow or shrink over time.<br>" +
+                                         "Hover over each option after selecting to learn more!</html>");
         
         JPanel typeContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 10));
         typeContainer.setOpaque(false);
@@ -103,6 +165,10 @@ public class GUI extends JFrame {
         rateField = new JTextField();
         yearsField = new JTextField();
 
+        // Add tooltips to text fields
+        nameField.setToolTipText("<html><b>Name:</b> Give your calculation a nickname to save it for later.<br>" +
+                                 "Like 'College Fund' or 'Car Savings'!</html>");
+        
         // Add input fields with consistent structure
         fieldsSection.add(createInputField("Name (optional):", nameField, nameLabel));
         fieldsSection.add(Box.createRigidArea(new Dimension(0, 15)));
@@ -135,6 +201,7 @@ public class GUI extends JFrame {
         calculateButton.setFocusPainted(false);
         calculateButton.setBorder(BorderFactory.createRaisedBevelBorder());
         calculateButton.addActionListener(e -> handleCalculate());
+        calculateButton.setToolTipText("<html><b>Calculate:</b> Click to see how your money will grow over time!</html>");
         
         JPanel buttonContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonContainer.setOpaque(false);
@@ -151,6 +218,8 @@ public class GUI extends JFrame {
         storageBox.setPreferredSize(new Dimension(350, 35));
         storageBox.setMaximumSize(new Dimension(350, 35));
         storageBox.addActionListener(e -> loadSave());
+        storageBox.setToolTipText("<html><b>Saved Calculations:</b> Pick a previous calculation to load it back.<br>" +
+                                  "Great for comparing different investment scenarios!</html>");
         
         JPanel storageContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 10));
         storageContainer.setOpaque(false);
@@ -167,7 +236,7 @@ public class GUI extends JFrame {
 
     private void buildOutputPanel() {
         outputPanel.setBackground(Color.WHITE);
-        outputPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 20, 30)); // Reduced bottom padding
+        outputPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         outputPanel.setLayout(new BorderLayout());
 
         // Results section
@@ -181,8 +250,8 @@ public class GUI extends JFrame {
         
         outputPanel.add(resultsHeader, BorderLayout.NORTH);
         
-        // Graph area (made smaller)
-        graphArea = new JPanel();
+        // Placeholder for graph
+        JPanel graphArea = new JPanel();
         graphArea.setBackground(Color.WHITE);
         graphArea.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(new Color(70, 130, 180), 2),
@@ -191,136 +260,18 @@ public class GUI extends JFrame {
             new Font("Arial", Font.BOLD, 16),
             new Color(70, 130, 180)
         ));
-        graphArea.setPreferredSize(new Dimension(600, 300)); // Made smaller to make room for tools
         outputPanel.add(graphArea, BorderLayout.CENTER);
-    }
-
-    // NEW: Build the prominent tools panel
-    private void buildToolsPanel() {
-        toolsPanel.setBackground(new Color(245, 245, 250)); // Light background
-        toolsPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(2, 0, 0, 0, new Color(70, 130, 180)),
-            BorderFactory.createEmptyBorder(25, 30, 25, 30)
-        ));
-        toolsPanel.setLayout(new BorderLayout());
-
-        // Tools title
-        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        titlePanel.setOpaque(false);
-        JLabel toolsTitle = new JLabel("Additional Investment Tools");
-        toolsTitle.setFont(new Font("Arial", Font.BOLD, 22));
-        toolsTitle.setForeground(new Color(25, 25, 112));
-        titlePanel.add(toolsTitle);
-        
-        // Tools buttons container
-        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 15));
-        buttonsPanel.setOpaque(false);
-        
-        // Stock Calculator Button
-        JButton stockButton = createToolButton(
-            "Stock Investment Calculator", 
-            "Explore investing in popular stocks like Apple, Tesla, and more!",
-            new Color(34, 139, 34), // Forest green
-            e -> openStockCalculator()
-        );
-        
-        // Utility Calculator Button  
-        JButton utilityButton = createToolButton(
-            "Ms. Fernandez Utility Calculator",
-            "Calculate the value and utility of purchases before buying!",
-            new Color(255, 140, 0), // Dark orange
-            e -> openUtilityCalculator()
-        );
-        
-        // AI Learning Assistant Button
-        JButton aiButton = createToolButton(
-            "AI Learning Assistant",
-            "Chat with AI to learn about investing, compound interest, and more!",
-            new Color(138, 43, 226), // Blue violet
-            e -> openClaudeChatbot()
-        );
-
-        buttonsPanel.add(stockButton);
-        buttonsPanel.add(utilityButton);
-        buttonsPanel.add(aiButton);
-        
-        toolsPanel.add(titlePanel, BorderLayout.NORTH);
-        toolsPanel.add(buttonsPanel, BorderLayout.CENTER);
-        
-        // Add a subtle description
-        JLabel description = new JLabel(
-            "<html><div style='text-align:center; color:#666666; font-style:italic;'>" +
-            "Expand your financial knowledge with these interactive tools designed specifically for teens!" +
-            "</div></html>"
-        );
-        description.setFont(new Font("Arial", Font.PLAIN, 13));
-        description.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        JPanel descPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        descPanel.setOpaque(false);
-        descPanel.add(description);
-        toolsPanel.add(descPanel, BorderLayout.SOUTH);
-    }
-
-    // Helper method to create attractive tool buttons
-    private JButton createToolButton(String title, String description, Color color, java.awt.event.ActionListener action) {
-        JButton button = new JButton();
-        button.setLayout(new BorderLayout());
-        button.setPreferredSize(new Dimension(280, 90));
-        button.setBackground(color);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createRaisedBevelBorder(),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.addActionListener(action);
-        
-        // Title label
-        JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        // Description label
-        JLabel descLabel = new JLabel("<html><div style='text-align:center;'>" + description + "</div></html>");
-        descLabel.setFont(new Font("Arial", Font.PLAIN, 11));
-        descLabel.setForeground(new Color(240, 240, 240));
-        descLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        button.add(titleLabel, BorderLayout.NORTH);
-        button.add(descLabel, BorderLayout.CENTER);
-        
-        // Add hover effect
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            Color originalColor = color;
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(color.brighter());
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(originalColor);
-            }
-        });
-        
-        return button;
     }
 
     private void buildBottomPanel() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int panelHeight = screenSize.height - 160; // Account for title and menu
+        int panelHeight = screenSize.height - 200; // Account for larger title panel with buttons
         
         inputPanel.setPreferredSize(new Dimension(500, panelHeight)); // Fixed width
-        
-        // Create a container for output and tools
-        JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.add(outputPanel, BorderLayout.CENTER);
-        rightPanel.add(toolsPanel, BorderLayout.SOUTH); // Add tools panel at bottom
-        
-        rightPanel.setPreferredSize(new Dimension(screenSize.width - 500, panelHeight));
+        outputPanel.setPreferredSize(new Dimension(screenSize.width - 500, panelHeight));
 
         bottomPanel.add(inputPanel, BorderLayout.WEST);
-        bottomPanel.add(rightPanel, BorderLayout.CENTER);
+        bottomPanel.add(outputPanel, BorderLayout.CENTER);
     }
 
     // Helper method to create structured sections
@@ -347,7 +298,7 @@ public class GUI extends JFrame {
         return section;
     }
 
-    // Helper method to create consistent input fields
+    // Helper method to create consistent input fields with tooltips
     private JPanel createInputField(String labelText, JTextField textField, JLabel label) {
         JPanel fieldPanel = new JPanel(new BorderLayout(10, 5));
         fieldPanel.setOpaque(false);
@@ -356,6 +307,9 @@ public class GUI extends JFrame {
         label.setText(labelText);
         label.setFont(new Font("Arial", Font.PLAIN, 16));
         label.setPreferredSize(new Dimension(200, 25));
+        
+        // Add comprehensive tooltips for each label
+        setLabelTooltip(label, labelText);
 
         textField.setFont(new Font("Arial", Font.PLAIN, 16));
         textField.setPreferredSize(new Dimension(150, 30));
@@ -363,11 +317,90 @@ public class GUI extends JFrame {
             BorderFactory.createLineBorder(new Color(180, 180, 180)),
             BorderFactory.createEmptyBorder(5, 8, 5, 8)
         ));
+        
+        // Add tooltips to text fields based on the label
+        setTextFieldTooltip(textField, labelText);
 
         fieldPanel.add(label, BorderLayout.WEST);
         fieldPanel.add(textField, BorderLayout.CENTER);
         
         return fieldPanel;
+    }
+    
+    // New method to set tooltips for labels
+    private void setLabelTooltip(JLabel label, String labelText) {
+        String tooltip = "";
+        
+        if (labelText.contains("Name")) {
+            tooltip = "<html><b>Name:</b> A label for your calculation.<br>" +
+                     "Example: 'College Savings' or 'Xbox Fund'<br>" +
+                     "This helps you remember what each calculation is for!</html>";
+        } else if (labelText.contains("Initial Amount")) {
+            tooltip = "<html><b>Initial Amount:</b> The money you start with.<br>" +
+                     "Example: If you have $100 in your piggy bank, that's your initial amount!<br>" +
+                     "Also called 'principal' in finance.</html>";
+        } else if (labelText.contains("Purchase Price")) {
+            tooltip = "<html><b>Purchase Price:</b> How much something costs to buy.<br>" +
+                     "Example: A car might cost $5,000.<br>" +
+                     "This is your starting value for assets.</html>";
+        } else if (labelText.contains("Annual Contribution")) {
+            tooltip = "<html><b>Annual Contribution:</b> Money you add every year.<br>" +
+                     "Example: If you save $50 each birthday, that's your annual contribution!<br>" +
+                     "Regular saving supercharges your growth!</html>";
+        } else if (labelText.contains("Interest Rate")) {
+            tooltip = "<html><b>Interest Rate:</b> The percentage your money grows each year.<br>" +
+                     "Example: 5% means for every $100, you earn $5 per year.<br>" +
+                     "Higher rates = faster growth!</html>";
+        } else if (labelText.contains("Annual Growth")) {
+            tooltip = "<html><b>Annual Growth:</b> How much value something gains per year.<br>" +
+                     "Example: A house might grow 3% in value each year.<br>" +
+                     "This is appreciation!</html>";
+        } else if (labelText.contains("Annual Decrease")) {
+            tooltip = "<html><b>Annual Decrease:</b> How much value something loses per year.<br>" +
+                     "Example: A car might lose 15% of its value each year.<br>" +
+                     "This is depreciation!</html>";
+        } else if (labelText.contains("Volatility")) {
+            tooltip = "<html><b>Volatility:</b> How wildly the price swings up and down.<br>" +
+                     "High volatility = big risks and big rewards!<br>" +
+                     "Crypto is super volatile - it's like a roller coaster!</html>";
+        } else if (labelText.contains("Inflation Rate")) {
+            tooltip = "<html><b>Inflation Rate:</b> How much prices go up each year.<br>" +
+                     "Example: If inflation is 3%, a $10 pizza costs $10.30 next year.<br>" +
+                     "Your money buys less over time!</html>";
+        } else if (labelText.contains("Nominal Value")) {
+            tooltip = "<html><b>Nominal Value:</b> The face value of money, not adjusted for inflation.<br>" +
+                     "Example: $100 today is nominally the same as $100 in 10 years.<br>" +
+                     "But it won't buy as much!</html>";
+        } else if (labelText.contains("Years")) {
+            tooltip = "<html><b>Years:</b> How long you'll let your money grow.<br>" +
+                     "The longer you wait, the more it grows!<br>" +
+                     "This is why starting young is so powerful!</html>";
+        }
+        
+        if (!tooltip.isEmpty()) {
+            label.setToolTipText(tooltip);
+        }
+    }
+    
+    // New method to set tooltips for text fields
+    private void setTextFieldTooltip(JTextField field, String labelText) {
+        String tooltip = "";
+        
+        if (labelText.contains("Initial Amount") || labelText.contains("Purchase Price") || labelText.contains("Nominal Value")) {
+            tooltip = "Enter a dollar amount (example: 1000)";
+        } else if (labelText.contains("Annual Contribution")) {
+            tooltip = "Enter how much you'll add each year (example: 500)";
+        } else if (labelText.contains("Interest Rate") || labelText.contains("Growth") || 
+                   labelText.contains("Decrease") || labelText.contains("Volatility") || 
+                   labelText.contains("Inflation")) {
+            tooltip = "Enter a percentage without the % sign (example: 5 for 5%)";
+        } else if (labelText.contains("Years")) {
+            tooltip = "Enter number of years (example: 10)";
+        }
+        
+        if (!tooltip.isEmpty()) {
+            field.setToolTipText(tooltip);
+        }
     }
 
     private void updateStorageBox() {
@@ -484,6 +517,38 @@ public class GUI extends JFrame {
     private void updateFieldsVisibility() {
         String selectedOption = (String) investmentTypeBox.getSelectedItem();
         
+        // Update investment type tooltip based on selection
+        if (selectedOption.equals("Compound Interest")) {
+            investmentTypeBox.setToolTipText("<html><b>Compound Interest:</b> You earn interest on your interest!<br>" +
+                                            "Like a snowball rolling downhill, getting bigger and bigger.<br>" +
+                                            "Einstein called it the 8th wonder of the world!</html>");
+        } else if (selectedOption.equals("Simple Interest")) {
+            investmentTypeBox.setToolTipText("<html><b>Simple Interest:</b> You only earn interest on your original amount.<br>" +
+                                            "Less powerful than compound interest.<br>" +
+                                            "Common for short-term loans.</html>");
+        } else if (selectedOption.equals("With Annual Contributions")) {
+            investmentTypeBox.setToolTipText("<html><b>Annual Contributions:</b> Adding money regularly to your investment.<br>" +
+                                            "Like putting birthday money in savings every year!<br>" +
+                                            "Small regular amounts become huge over time!</html>");
+        } else if (selectedOption.equals("Appreciating Asset")) {
+            investmentTypeBox.setToolTipText("<html><b>Appreciating Asset:</b> Something that gains value over time.<br>" +
+                                            "Examples: Houses, rare collectibles, some stocks.<br>" +
+                                            "Buy low, sell high!</html>");
+        } else if (selectedOption.equals("Depreciating Asset")) {
+            investmentTypeBox.setToolTipText("<html><b>Depreciating Asset:</b> Something that loses value over time.<br>" +
+                                            "Examples: Cars, phones, computers.<br>" +
+                                            "Important to know when buying expensive things!</html>");
+        } else if (selectedOption.equals("Simulated Crypto")) {
+            investmentTypeBox.setToolTipText("<html><b>Crypto Simulation:</b> Shows how volatile investments behave.<br>" +
+                                            "Crypto can go way up OR way down - it's risky!<br>" +
+                                            "Never invest more than you can afford to lose!</html>");
+        } else if (selectedOption.equals("Inflation-adjusted Value")) {
+            investmentTypeBox.setToolTipText("<html><b>Inflation Adjustment:</b> Shows what money is really worth over time.<br>" +
+                                            "As prices go up, your money buys less.<br>" +
+                                            "This is why investing beats keeping cash under your mattress!</html>");
+        }
+        
+        // Update field labels and visibility
         if (selectedOption.equals(options[0]) || selectedOption.equals(options[1])) {
             nameLabel.setText("Name (optional):");
             amountLabel.setText("Initial Amount ($):");
@@ -527,6 +592,13 @@ public class GUI extends JFrame {
             yearsLabel.setText("Years:");
             contributionPanel.setVisible(false);
         }
+        
+        // Update tooltips when labels change
+        setLabelTooltip(nameLabel, nameLabel.getText());
+        setLabelTooltip(amountLabel, amountLabel.getText());
+        setLabelTooltip(rateLabel, rateLabel.getText());
+        setLabelTooltip(yearsLabel, yearsLabel.getText());
+        setLabelTooltip(contributionLabel, contributionLabel.getText());
         
         inputPanel.revalidate();
         inputPanel.repaint();
@@ -616,11 +688,19 @@ public class GUI extends JFrame {
             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
             resultLabel.setText("Future Value: " + currencyFormat.format(futureValue));
 
-            // Show graph in graphArea
-            graphArea.removeAll();
-            graphArea.add(new ValueProjectionGraphPanel(values, years), BorderLayout.CENTER);
-            graphArea.revalidate();
-            graphArea.repaint();
+            // Show graph in outputPanel
+            outputPanel.removeAll();
+            
+            // Results header
+            JPanel resultsHeader = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            resultsHeader.setOpaque(false);
+            resultsHeader.add(resultLabel);
+            outputPanel.add(resultsHeader, BorderLayout.NORTH);
+            
+            // Graph
+            outputPanel.add(new ValueProjectionGraphPanel(values, years), BorderLayout.CENTER);
+            outputPanel.revalidate();
+            outputPanel.repaint();
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -654,7 +734,22 @@ public class GUI extends JFrame {
         ClaudeEducationalChatbot chatbot = new ClaudeEducationalChatbot(frame);
         chatbot.setVisible(true);
     }
-    
+
+    private void showAbout() {
+        JOptionPane.showMessageDialog(frame, 
+            "Investment Calculator for Teens\n" +
+            "Features:\n" +
+            "Investment calculations and projections\n" +
+            "Utility Calculator\n" +
+            "Stock investment tools\n" +
+            "AI Learning Assistant\n" +
+            "Educational tooltips on hover\n\n" +
+            "Version 2.1 - Now with helpful tooltips!\n\n" +
+            "Hover over any label or field to learn more!", 
+            "About", 
+            JOptionPane.INFORMATION_MESSAGE);
+    }
+
     private void configureLayout() {
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(bottomPanel, BorderLayout.CENTER);

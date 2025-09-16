@@ -46,7 +46,7 @@ public class InvestmentLogic {
         return nominalValue / Math.pow(1 + inflationRate, years);
     }
 
-    //8. Utility Per Dollar (Ms. Fernandez's formula)
+    //8. Utility Per Dollar
     public static int utilityPerDollar(int happiness, int frequency, double convenience, int lifestyleConvenience, int timeYears, int lifespan, int price) {
         // Fix: Use double division instead of integer division
         double adjustedCost = Math.ceil((double)timeYears / lifespan) * price;

@@ -13,7 +13,7 @@ public class EnhancedStockRates {
     
     // IMPORTANT: Replace this with your actual Alpha Vantage API key
     // Get a free key at: https://www.alphavantage.co/support/#api-key
-    private static final String API_KEY = "api-key-here";
+    private static final String API_KEY = "your-api-key";
     
     static {
         // Teen-friendly stock symbols with company names

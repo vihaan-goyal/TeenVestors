@@ -7,7 +7,7 @@ public class UtilityCalculatorDialog extends JDialog {
     private JLabel resultLabel;
 
     public UtilityCalculatorDialog(JFrame parent) {
-        super(parent, "Ms. Fernandez Utility Calculator", true);
+        super(parent, "Utility Calculator", true);
         initComponents();
         setupLayout();
         pack();
@@ -35,7 +35,7 @@ public class UtilityCalculatorDialog extends JDialog {
         // Title panel
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(70, 130, 180));
-        JLabel titleLabel = new JLabel("Ms. Fernandez Utility Calculator");
+        JLabel titleLabel = new JLabel("Utility Calculator");
         titleLabel.setFont(new Font("Verdana", Font.BOLD, 20));
         titleLabel.setForeground(Color.WHITE);
         titlePanel.add(titleLabel);
