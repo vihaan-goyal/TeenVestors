@@ -95,21 +95,20 @@ public class GUI extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setOpaque(false);
         
-        // Stock Calculator Button
-        JButton stockButton = createModernButton("Stock Calculator", new Color(231, 76, 60), 200);
+        // Stock Calculator Button with image background
+        JButton stockButton = createImageButton("/images/Stock.png", "", 200, 45);
         stockButton.addActionListener(e -> openStockCalculator());
-        
-        // Utility Calculator Button
-        JButton utilityButton = createModernButton("Utility Calculator", SUCCESS_GREEN, 200);
+            
+        // Utility Calculator Button with image background
+        JButton utilityButton = createImageButton("/images/Utility.png", "", 200, 45);
         utilityButton.addActionListener(e -> openUtilityCalculator());
         
-        // AI Learning Assistant Button
-        JButton aiButton = createModernButton("AI Learning Assistant", new Color(138, 43, 226), 220);
-        aiButton.setForeground(Color.WHITE);
+        // AI Learning Assistant Button with image background
+        JButton aiButton = createImageButton("/images/AI.png", "", 220, 45);
         aiButton.addActionListener(e -> openClaudeChatbot());
         
-        // About Button
-        JButton aboutButton = createModernButton("About", WARNING_ORANGE, 120);
+        // About Button with image background
+        JButton aboutButton = createImageButton("/images/About.png", "", 200, 45);
         aboutButton.addActionListener(e -> showAbout());
         
         buttonPanel.add(stockButton);
@@ -139,6 +138,94 @@ public class GUI extends JFrame {
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setBackground(bgColor);
+            }
+        });
+        
+        return button;
+    }
+    
+    // New method to create image buttons
+    private JButton createImageButton(String imagePath, String text, int width, int height) {
+        // Create a custom button class
+        class ImageButton extends JButton {
+            private boolean isHovered = false;
+            
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Draw the image to fill the entire button
+                try {
+                    ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+                    Image image = icon.getImage();
+                    g2d.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+                    
+                    // Add hover effect - darken the image when hovered
+                    if (isHovered) {
+                        g2d.setColor(new Color(0, 0, 0, 80)); // Semi-transparent black overlay
+                        g2d.fillRect(0, 0, getWidth(), getHeight());
+                        
+                        // Add a subtle border for extra visual feedback
+                        g2d.setColor(new Color(255, 255, 255, 150));
+                        g2d.setStroke(new BasicStroke(2));
+                        g2d.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, 8, 8);
+                    }
+                    
+                    // Add text overlay if provided
+                    if (text != null && !text.isEmpty()) {
+                        g2d.setColor(Color.WHITE);
+                        g2d.setFont(new Font("Segoe UI", Font.BOLD, 16));
+                        FontMetrics fm = g2d.getFontMetrics();
+                        int textWidth = fm.stringWidth(text);
+                        int textHeight = fm.getHeight();
+                        int x = (getWidth() - textWidth) / 2;
+                        int y = (getHeight() + textHeight) / 2 - 2;
+                        
+                        // Add text shadow for better visibility
+                        g2d.setColor(new Color(0, 0, 0, 100));
+                        g2d.drawString(text, x + 1, y + 1);
+                        g2d.setColor(Color.WHITE);
+                        g2d.drawString(text, x, y);
+                    }
+                } catch (Exception e) {
+                    // Fallback to regular button if image fails to load
+                    g2d.setColor(getBackground());
+                    g2d.fillRect(0, 0, getWidth(), getHeight());
+                    if (text != null && !text.isEmpty()) {
+                        g2d.setColor(getForeground());
+                        g2d.setFont(new Font("Segoe UI", Font.BOLD, 16));
+                        FontMetrics fm = g2d.getFontMetrics();
+                        int textWidth = fm.stringWidth(text);
+                        int x = (getWidth() - textWidth) / 2;
+                        int y = (getHeight() + fm.getHeight()) / 2 - 2;
+                        g2d.drawString(text, x, y);
+                    }
+                }
+            }
+            
+            public void setHovered(boolean hovered) {
+                this.isHovered = hovered;
+                repaint();
+            }
+        }
+        
+        ImageButton button = new ImageButton();
+        button.setPreferredSize(new Dimension(width, height));
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        // Enhanced hover effect with image darkening
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setHovered(true);
+            }
+            
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setHovered(false);
             }
         });
         
