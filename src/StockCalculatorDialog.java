@@ -42,8 +42,8 @@ public class StockCalculatorDialog extends JDialog {
         stockCombo.setPreferredSize(new Dimension(300, 40));
         stockCombo.addActionListener(e -> updateStockInfo());
         
-        investmentField = createStyledTextField("1000");
-        yearsField = createStyledTextField("10");
+        investmentField = createStyledTextField("");
+        yearsField = createStyledTextField("");
         
         currentPriceLabel = new JLabel("Loading...");
         currentPriceLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));

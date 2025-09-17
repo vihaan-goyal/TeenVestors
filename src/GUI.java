@@ -16,6 +16,16 @@ public class GUI extends JFrame {
     private JLabel yearsLabel = new JLabel();
     private JLabel contributionLabel = new JLabel();
     private JPanel contributionPanel;
+    
+    // Modern color palette matching StockCalculatorDialog
+    private final Color PRIMARY_BLUE = new Color(41, 128, 185);
+    private final Color SUCCESS_GREEN = new Color(46, 204, 113);
+    private final Color WARNING_ORANGE = new Color(243, 156, 18);
+    private final Color DANGER_RED = new Color(231, 76, 60);
+    private final Color DARK_GRAY = new Color(52, 73, 94);
+    private final Color CARD_WHITE = new Color(255, 255, 255);
+    private final Color BACKGROUND_GRAY = new Color(247, 249, 252);
+    private final Color LIGHT_GRAY = new Color(230, 230, 230);
 
     String[] options = {
         "Compound Interest",
@@ -42,78 +52,61 @@ public class GUI extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setLayout(new BorderLayout());
+        frame.getContentPane().setBackground(BACKGROUND_GRAY);
     }
 
     private void initPanels() {
         topPanel = new JPanel();
         bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBackground(BACKGROUND_GRAY);
         inputPanel = new JPanel();
         outputPanel = new JPanel();
     }
 
     private void buildTopPanel() {
-        topPanel.setBackground(new Color(70, 130, 180)); // Steel blue
+        topPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                int w = getWidth();
+                int h = getHeight();
+                GradientPaint gp = new GradientPaint(0, 0, PRIMARY_BLUE, w, h, new Color(109, 213, 237));
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, w, h);
+            }
+        };
         topPanel.setPreferredSize(new Dimension(100, 160));
-        topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, new Color(25, 25, 112))); // Navy border
         topPanel.setLayout(new BorderLayout());
 
-        // Title
+        // Title container
         JPanel titleContainer = new JPanel();
         titleContainer.setOpaque(false);
-        JLabel title = new JLabel("Investment Calculator for Teens");
-        title.setFont(new Font("Verdana", Font.BOLD, 48));
+        JLabel title = new JLabel("Teen Investment Calculator");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 48));
         title.setForeground(Color.WHITE);
         titleContainer.add(title);
         
-        // Button panel
+        // Modern button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setOpaque(false);
         
         // Stock Calculator Button
-        JButton stockButton = new JButton("Stock Calculator");
-        stockButton.setFont(new Font("Arial", Font.BOLD, 16));
-        stockButton.setBackground(new Color(195, 58, 25));
-        stockButton.setForeground(new Color(0, 0, 0));
-        stockButton.setPreferredSize(new Dimension(200, 40));
-        stockButton.setFocusPainted(false);
-        stockButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        stockButton.setToolTipText("<html><b>Stock Calculator:</b> Learn about investing in companies like Apple, Tesla, and Google!<br>" +
-                                   "See how stocks can grow your money over time.</html>");
+        JButton stockButton = createModernButton("Stock Calculator", new Color(231, 76, 60), 200);
         stockButton.addActionListener(e -> openStockCalculator());
         
         // Utility Calculator Button
-        JButton utilityButton = new JButton("Utility Calculator");
-        utilityButton.setFont(new Font("Arial", Font.BOLD, 16));
-        utilityButton.setBackground(new Color(170, 255, 144));
-        utilityButton.setForeground(new Color(0, 0, 0));
-        utilityButton.setPreferredSize(new Dimension(200, 40));
-        utilityButton.setFocusPainted(false);
-        utilityButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        utilityButton.setToolTipText("<html><b>Utility Calculator:</b> Decide if something is worth buying!<br>" +
-                                     "Calculate the value you get per dollar spent.</html>");
+        JButton utilityButton = createModernButton("Utility Calculator", SUCCESS_GREEN, 200);
         utilityButton.addActionListener(e -> openUtilityCalculator());
         
         // AI Learning Assistant Button
-        JButton aiButton = new JButton("AI Learning Assistant");
-        aiButton.setFont(new Font("Arial", Font.BOLD, 16));
-        aiButton.setBackground(new Color(138, 43, 226));
+        JButton aiButton = createModernButton("AI Learning Assistant", new Color(138, 43, 226), 220);
         aiButton.setForeground(Color.WHITE);
-        aiButton.setPreferredSize(new Dimension(220, 40));
-        aiButton.setFocusPainted(false);
-        aiButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        aiButton.setToolTipText("<html><b>AI Learning Assistant:</b> Chat with AI to learn about investing!<br>" +
-                                "Ask questions and get personalized financial education.</html>");
         aiButton.addActionListener(e -> openClaudeChatbot());
         
         // About Button
-        JButton aboutButton = new JButton("About");
-        aboutButton.setFont(new Font("Arial", Font.BOLD, 16));
-        aboutButton.setBackground(new Color(218,165,32));
-        aboutButton.setForeground(new Color(0, 0, 0));
-        aboutButton.setPreferredSize(new Dimension(120, 40));
-        aboutButton.setFocusPainted(false);
-        aboutButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        aboutButton.setToolTipText("<html><b>About:</b> Learn more about this calculator and its features.</html>");
+        JButton aboutButton = createModernButton("About", WARNING_ORANGE, 120);
         aboutButton.addActionListener(e -> showAbout());
         
         buttonPanel.add(stockButton);
@@ -125,200 +118,167 @@ public class GUI extends JFrame {
         topPanel.add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    private JButton createModernButton(String text, Color bgColor, int width) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        button.setBackground(bgColor);
+        button.setForeground(bgColor == WARNING_ORANGE || bgColor == SUCCESS_GREEN ? Color.BLACK : Color.WHITE);
+        button.setPreferredSize(new Dimension(width, 45));
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        // Hover effect
+        Color hoverColor = bgColor.darker();
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(hoverColor);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(bgColor);
+            }
+        });
+        
+        return button;
+    }
+
     private void buildInputPanel() {
-        inputPanel.setBackground(new Color(248, 248, 255)); // Ghost white
-        inputPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 0, 2, new Color(70, 130, 180)),
-            BorderFactory.createEmptyBorder(30, 30, 30, 30)
-        ));
+        inputPanel.setBackground(BACKGROUND_GRAY);
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         inputPanel.setLayout(new BorderLayout());
 
-        // Main input container with proper structure
+        // Main input container
         JPanel mainInputContainer = new JPanel();
         mainInputContainer.setLayout(new BoxLayout(mainInputContainer, BoxLayout.Y_AXIS));
         mainInputContainer.setOpaque(false);
 
-        // Investment Type Section
-        JPanel typeSection = createSection("Investment Type", null);
-        investmentTypeBox = new JComboBox<>(options);
-        investmentTypeBox.setFont(new Font("Arial", Font.PLAIN, 16));
-        investmentTypeBox.setPreferredSize(new Dimension(350, 35));
-        investmentTypeBox.setMaximumSize(new Dimension(350, 35));
-        investmentTypeBox.addActionListener(e -> updateFieldsVisibility());
-        investmentTypeBox.setToolTipText("<html><b>Investment Type:</b> Different ways money can grow or shrink over time.<br>" +
-                                         "Hover over each option after selecting to learn more!</html>");
-        
-        JPanel typeContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 10));
-        typeContainer.setOpaque(false);
-        typeContainer.add(investmentTypeBox);
-        typeSection.add(typeContainer);
-        
-        mainInputContainer.add(typeSection);
+    
+
+        // Investment Type Card
+        JPanel typeCard = createCard("Investment Type", createInvestmentTypePanel());
+        mainInputContainer.add(typeCard);
         mainInputContainer.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Input Fields Section
-        JPanel fieldsSection = createSection("Investment Details", null);
-        
-        nameField = new JTextField();
-        amountField = new JTextField();
-        contributionField = new JTextField();
-        rateField = new JTextField();
-        yearsField = new JTextField();
+        // Investment Details Card
+        JPanel detailsCard = createCard("Investment Details", createInvestmentDetailsPanel());
+        mainInputContainer.add(detailsCard);
+        mainInputContainer.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Add tooltips to text fields
-        nameField.setToolTipText("<html><b>Name:</b> Give your calculation a nickname to save it for later.<br>" +
-                                 "Like 'College Fund' or 'Car Savings'!</html>");
-        
-        // Add input fields with consistent structure
-        fieldsSection.add(createInputField("Name (optional):", nameField, nameLabel));
-        fieldsSection.add(Box.createRigidArea(new Dimension(0, 15)));
-        
-        fieldsSection.add(createInputField("Initial Amount ($):", amountField, amountLabel));
-        fieldsSection.add(Box.createRigidArea(new Dimension(0, 15)));
-        
-        // Contribution field (initially hidden)
-        contributionPanel = createInputField("Annual Contribution ($):", contributionField, contributionLabel);
-        contributionPanel.setVisible(false);
-        fieldsSection.add(contributionPanel);
-        fieldsSection.add(Box.createRigidArea(new Dimension(0, 15)));
-        
-        fieldsSection.add(createInputField("Interest Rate (%):", rateField, rateLabel));
-        fieldsSection.add(Box.createRigidArea(new Dimension(0, 15)));
-        
-        fieldsSection.add(createInputField("Years:", yearsField, yearsLabel));
-        
-        mainInputContainer.add(fieldsSection);
-        mainInputContainer.add(Box.createRigidArea(new Dimension(0, 25)));
-
-        // Calculate Button Section
-        JPanel buttonSection = createSection("Calculate", null);
-        JButton calculateButton = new JButton("Calculate Investment");
-        calculateButton.setFont(new Font("Arial", Font.BOLD, 18));
-        calculateButton.setBackground(new Color(70, 130, 180));
-        calculateButton.setForeground(Color.WHITE);
-        calculateButton.setPreferredSize(new Dimension(300, 45));
-        calculateButton.setMaximumSize(new Dimension(300, 45));
-        calculateButton.setFocusPainted(false);
-        calculateButton.setBorder(BorderFactory.createRaisedBevelBorder());
-        calculateButton.addActionListener(e -> handleCalculate());
-        calculateButton.setToolTipText("<html><b>Calculate:</b> Click to see how your money will grow over time!</html>");
-        
+        // Calculate Button
+        JButton calculateButton = createCalculateButton();
         JPanel buttonContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonContainer.setOpaque(false);
         buttonContainer.add(calculateButton);
-        buttonSection.add(buttonContainer);
-        
-        mainInputContainer.add(buttonSection);
-        mainInputContainer.add(Box.createRigidArea(new Dimension(0, 25)));
+        mainInputContainer.add(buttonContainer);
+        mainInputContainer.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Saved Calculations Section
-        JPanel storageSection = createSection("Load Saved Calculation", null);
-        storageBox = new JComboBox<>(Write.getNames(true));
-        storageBox.setFont(new Font("Arial", Font.PLAIN, 16));
-        storageBox.setPreferredSize(new Dimension(350, 35));
-        storageBox.setMaximumSize(new Dimension(350, 35));
-        storageBox.addActionListener(e -> loadSave());
-        storageBox.setToolTipText("<html><b>Saved Calculations:</b> Pick a previous calculation to load it back.<br>" +
-                                  "Great for comparing different investment scenarios!</html>");
-        
-        JPanel storageContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 10));
-        storageContainer.setOpaque(false);
-        storageContainer.add(storageBox);
-        storageSection.add(storageContainer);
-        
-        mainInputContainer.add(storageSection);
+        // Saved Calculations Card
+        JPanel savedCard = createCard("Load Saved Calculation", createSavedCalculationsPanel());
+        mainInputContainer.add(savedCard);
 
         inputPanel.add(mainInputContainer, BorderLayout.NORTH);
         
         // Initialize field visibility
         updateFieldsVisibility();
+
     }
 
-    private void buildOutputPanel() {
-        outputPanel.setBackground(Color.WHITE);
-        outputPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-        outputPanel.setLayout(new BorderLayout());
-
-        // Results section
-        JPanel resultsHeader = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        resultsHeader.setOpaque(false);
-        
-        resultLabel = new JLabel("Future Value: Ready to calculate");
-        resultLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        resultLabel.setForeground(new Color(25, 25, 112));
-        resultsHeader.add(resultLabel);
-        
-        outputPanel.add(resultsHeader, BorderLayout.NORTH);
-        
-        // Placeholder for graph
-        JPanel graphArea = new JPanel();
-        graphArea.setBackground(Color.WHITE);
-        graphArea.setBorder(BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(70, 130, 180), 2),
-            "Investment Growth Chart",
-            0, 0,
-            new Font("Arial", Font.BOLD, 16),
-            new Color(70, 130, 180)
+    private JPanel createCard(String title, JPanel content) {
+        JPanel card = new JPanel(new BorderLayout());
+        card.setBackground(CARD_WHITE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            new RoundedBorder(15, LIGHT_GRAY, 1),
+            BorderFactory.createEmptyBorder(20, 0, 20, 25)
         ));
-        outputPanel.add(graphArea, BorderLayout.CENTER);
-    }
-
-    private void buildBottomPanel() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int panelHeight = screenSize.height - 200; // Account for larger title panel with buttons
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, content.getPreferredSize().height + 80));
         
-        inputPanel.setPreferredSize(new Dimension(500, panelHeight)); // Fixed width
-        outputPanel.setPreferredSize(new Dimension(screenSize.width - 500, panelHeight));
-
-        bottomPanel.add(inputPanel, BorderLayout.WEST);
-        bottomPanel.add(outputPanel, BorderLayout.CENTER);
-    }
-
-    // Helper method to create structured sections
-    private JPanel createSection(String title, Color backgroundColor) {
-        JPanel section = new JPanel();
-        section.setLayout(new BoxLayout(section, BoxLayout.Y_AXIS));
-        section.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(70, 130, 180), 1),
-                title,
-                0, 0,
-                new Font("Arial", Font.BOLD, 16),
-                new Color(70, 130, 180)
-            ),
-            BorderFactory.createEmptyBorder(15, 15, 15, 15)
-        ));
-        
-        if (backgroundColor != null) {
-            section.setBackground(backgroundColor);
-        } else {
-            section.setOpaque(false);
+        if (title != null && !title.isEmpty()) {
+            JLabel titleLabel = new JLabel(title);
+            titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            titleLabel.setForeground(DARK_GRAY);
+            titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
+            card.add(titleLabel, BorderLayout.NORTH);
         }
         
-        return section;
+        card.add(content, BorderLayout.CENTER);
+        return card;
     }
 
-    // Helper method to create consistent input fields with tooltips
-    private JPanel createInputField(String labelText, JTextField textField, JLabel label) {
+    private JPanel createInvestmentTypePanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel.setOpaque(false);
+        
+        investmentTypeBox = new JComboBox<>(options);
+        investmentTypeBox.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        investmentTypeBox.setPreferredSize(new Dimension(350, 40));
+        investmentTypeBox.setBackground(Color.WHITE);
+        investmentTypeBox.addActionListener(e -> updateFieldsVisibility());
+        investmentTypeBox.setToolTipText("<html><b>Investment Type:</b> Different ways money can grow or shrink over time.<br>" +
+                                         "Hover over each option after selecting to learn more!</html>");
+        
+        panel.add(investmentTypeBox);
+        return panel;
+    }
+
+    private JPanel createInvestmentDetailsPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(false);
+        
+        nameField = createStyledTextField("");
+        amountField = createStyledTextField("");
+        contributionField = createStyledTextField("");
+        rateField = createStyledTextField("");
+        yearsField = createStyledTextField("");
+
+        // Add tooltips to text fields
+        nameField.setToolTipText("<html><b>Name:</b> Give your calculation a nickname to save it for later.<br>" +
+                                 "Like 'College Fund' or 'Car Savings'!</html>");
+        
+        // Add input fields with modern styling
+        panel.add(createModernInputField("Name (optional):", nameField, nameLabel));
+        panel.add(Box.createRigidArea(new Dimension(0, 15)));
+        
+        panel.add(createModernInputField("Initial Amount ($):", amountField, amountLabel));
+        panel.add(Box.createRigidArea(new Dimension(0, 15)));
+        
+        // Contribution field (initially hidden)
+        contributionPanel = createModernInputField("Annual Contribution ($):", contributionField, contributionLabel);
+        contributionPanel.setVisible(false);
+        panel.add(contributionPanel);
+        panel.add(Box.createRigidArea(new Dimension(0, 15)));
+        
+        panel.add(createModernInputField("Interest Rate (%):", rateField, rateLabel));
+        panel.add(Box.createRigidArea(new Dimension(0, 15)));
+        
+        panel.add(createModernInputField("Years:", yearsField, yearsLabel));
+        
+        return panel;
+    }
+
+    private JTextField createStyledTextField(String text) {
+        JTextField field = new JTextField(text);
+        field.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        field.setPreferredSize(new Dimension(200, 40));
+        field.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+            BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+        field.setBackground(Color.WHITE);
+        return field;
+    }
+
+    private JPanel createModernInputField(String labelText, JTextField textField, JLabel label) {
         JPanel fieldPanel = new JPanel(new BorderLayout(10, 5));
         fieldPanel.setOpaque(false);
-        fieldPanel.setMaximumSize(new Dimension(450, 40));
+        fieldPanel.setMaximumSize(new Dimension(450, 45));
 
         label.setText(labelText);
-        label.setFont(new Font("Arial", Font.PLAIN, 16));
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        label.setForeground(DARK_GRAY);
         label.setPreferredSize(new Dimension(200, 25));
         
-        // Add comprehensive tooltips for each label
         setLabelTooltip(label, labelText);
-
-        textField.setFont(new Font("Arial", Font.PLAIN, 16));
-        textField.setPreferredSize(new Dimension(150, 30));
-        textField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(180, 180, 180)),
-            BorderFactory.createEmptyBorder(5, 8, 5, 8)
-        ));
-        
-        // Add tooltips to text fields based on the label
         setTextFieldTooltip(textField, labelText);
 
         fieldPanel.add(label, BorderLayout.WEST);
@@ -326,8 +286,99 @@ public class GUI extends JFrame {
         
         return fieldPanel;
     }
-    
-    // New method to set tooltips for labels
+
+    private JButton createCalculateButton() {
+        JButton button = new JButton("Calculate My Investment");
+        button.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        button.setForeground(Color.WHITE);
+        button.setBackground(SUCCESS_GREEN);
+        button.setPreferredSize(new Dimension(350, 50));
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        // Hover effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(39, 174, 96));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(SUCCESS_GREEN);
+            }
+        });
+        
+        button.addActionListener(e -> handleCalculate());
+        return button;
+    }
+
+    private JPanel createSavedCalculationsPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel.setOpaque(false);
+        
+        storageBox = new JComboBox<>(Write.getNames(true));
+        storageBox.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        storageBox.setPreferredSize(new Dimension(350, 40));
+        storageBox.setBackground(Color.WHITE);
+        storageBox.addActionListener(e -> loadSave());
+        storageBox.setToolTipText("<html><b>Saved Calculations:</b> Pick a previous calculation to load it back.<br>" +
+                                  "Great for comparing different investment scenarios!</html>");
+        
+        panel.add(storageBox);
+        return panel;
+    }
+
+    private void buildOutputPanel() {
+        outputPanel.setBackground(CARD_WHITE);
+        outputPanel.setBorder(BorderFactory.createCompoundBorder(
+            new RoundedBorder(15, LIGHT_GRAY, 1),
+            BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
+        outputPanel.setLayout(new BorderLayout());
+
+        // Results header
+        JPanel resultsHeader = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        resultsHeader.setOpaque(false);
+        
+        resultLabel = new JLabel("Ready to calculate your future wealth!");
+        resultLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        resultLabel.setForeground(PRIMARY_BLUE);
+        resultsHeader.add(resultLabel);
+        
+        outputPanel.add(resultsHeader, BorderLayout.NORTH);
+        
+        // Placeholder for graph
+        JPanel graphArea = new JPanel();
+        graphArea.setBackground(Color.WHITE);
+        graphArea.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+        
+        JLabel placeholderLabel = new JLabel("Your investment growth chart will appear here");
+        placeholderLabel.setFont(new Font("Segoe UI", Font.ITALIC, 16));
+        placeholderLabel.setForeground(new Color(127, 140, 141));
+        placeholderLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        graphArea.add(placeholderLabel);
+        
+        outputPanel.add(graphArea, BorderLayout.CENTER);
+    }
+
+    private void buildBottomPanel() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int panelHeight = screenSize.height - 200;
+        
+        // Create a scroll pane for the input panel
+        JScrollPane inputScrollPane = new JScrollPane(inputPanel);
+        inputScrollPane.setPreferredSize(new Dimension(500, panelHeight));
+        inputScrollPane.setBorder(null);
+        inputScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        inputScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        inputScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        
+        outputPanel.setPreferredSize(new Dimension(screenSize.width - 500, panelHeight));
+
+        bottomPanel.add(inputScrollPane, BorderLayout.WEST);
+        bottomPanel.add(outputPanel, BorderLayout.CENTER);
+    }
+
+    // Helper method to set tooltips for labels
     private void setLabelTooltip(JLabel label, String labelText) {
         String tooltip = "";
         
@@ -382,7 +433,7 @@ public class GUI extends JFrame {
         }
     }
     
-    // New method to set tooltips for text fields
+    // Helper method to set tooltips for text fields
     private void setTextFieldTooltip(JTextField field, String labelText) {
         String tooltip = "";
         
@@ -686,10 +737,27 @@ public class GUI extends JFrame {
             
             // Format the result with commas for better readability
             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
-            resultLabel.setText("Future Value: " + currencyFormat.format(futureValue));
+            
+            // Update result label with color based on gain/loss
+            double totalChange = futureValue - principal;
+            if (totalChange > 0) {
+                resultLabel.setForeground(SUCCESS_GREEN);
+                resultLabel.setText("Future Value: " + currencyFormat.format(futureValue) + "!");
+            } else if (totalChange < 0) {
+                resultLabel.setForeground(DANGER_RED);
+                resultLabel.setText("Future Value: " + currencyFormat.format(futureValue));
+            } else {
+                resultLabel.setForeground(DARK_GRAY);
+                resultLabel.setText("Future Value: " + currencyFormat.format(futureValue));
+            }
 
-            // Show graph in outputPanel
+            // Show graph in outputPanel with modern styling
             outputPanel.removeAll();
+            outputPanel.setBackground(CARD_WHITE);
+            outputPanel.setBorder(BorderFactory.createCompoundBorder(
+                new RoundedBorder(15, SUCCESS_GREEN, 2),
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+            ));
             
             // Results header
             JPanel resultsHeader = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -697,13 +765,23 @@ public class GUI extends JFrame {
             resultsHeader.add(resultLabel);
             outputPanel.add(resultsHeader, BorderLayout.NORTH);
             
+            // Add summary panel
+            JPanel summaryPanel = createSummaryPanel(principal, futureValue, years, rate);
+            outputPanel.add(summaryPanel, BorderLayout.SOUTH);
+            
             // Graph
-            outputPanel.add(new ValueProjectionGraphPanel(values, years), BorderLayout.CENTER);
+            ValueProjectionGraphPanel graphPanel = new ValueProjectionGraphPanel(values, years);
+            graphPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+            outputPanel.add(graphPanel, BorderLayout.CENTER);
+            
             outputPanel.revalidate();
             outputPanel.repaint();
 
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(frame, "Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, 
+                "Please enter valid numbers in all fields.", 
+                "Input Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
         
         updateStorageBox();
@@ -715,6 +793,54 @@ public class GUI extends JFrame {
                 break;
             }
         }
+    }
+    
+    private JPanel createSummaryPanel(double principal, double futureValue, int years, double rate) {
+        JPanel summaryPanel = new JPanel(new GridLayout(1, 3, 20, 0));
+        summaryPanel.setOpaque(false);
+        summaryPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 0, 40));
+        
+        // Total Return
+        double totalReturn = futureValue - principal;
+        double percentReturn = (totalReturn / principal) * 100;
+        
+        // Create metric cards
+        summaryPanel.add(createMetricCard("Total Return", 
+            String.format("%s%.2f", totalReturn >= 0 ? "+$" : "-$", Math.abs(totalReturn)),
+            totalReturn >= 0 ? SUCCESS_GREEN : DANGER_RED));
+        
+        summaryPanel.add(createMetricCard("Percentage Gain", 
+            String.format("%.1f%%", percentReturn),
+            percentReturn >= 0 ? SUCCESS_GREEN : DANGER_RED));
+        
+        summaryPanel.add(createMetricCard("Annual Rate", 
+            String.format("%.1f%%", rate * 100),
+            PRIMARY_BLUE));
+        
+        return summaryPanel;
+    }
+    
+    private JPanel createMetricCard(String label, String value, Color valueColor) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setOpaque(false);
+        card.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        JLabel labelComponent = new JLabel(label);
+        labelComponent.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        labelComponent.setForeground(DARK_GRAY);
+        labelComponent.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        JLabel valueComponent = new JLabel(value);
+        valueComponent.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        valueComponent.setForeground(valueColor);
+        valueComponent.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        card.add(labelComponent);
+        card.add(Box.createRigidArea(new Dimension(0, 5)));
+        card.add(valueComponent);
+        
+        return card;
     }
 
     // Method to open the utility calculator
@@ -736,18 +862,79 @@ public class GUI extends JFrame {
     }
 
     private void showAbout() {
-        JOptionPane.showMessageDialog(frame, 
-            "Investment Calculator for Teens\n" +
-            "Features:\n" +
-            "Investment calculations and projections\n" +
-            "Utility Calculator\n" +
-            "Stock investment tools\n" +
-            "AI Learning Assistant\n" +
-            "Educational tooltips on hover\n\n" +
-            "Version 2.1 - Now with helpful tooltips!\n\n" +
-            "Hover over any label or field to learn more!", 
-            "About", 
-            JOptionPane.INFORMATION_MESSAGE);
+        // Create custom about dialog with modern styling
+        JDialog aboutDialog = new JDialog(frame, "About Investment Calculator", true);
+        aboutDialog.setLayout(new BorderLayout());
+        aboutDialog.setSize(500, 400);
+        aboutDialog.setLocationRelativeTo(frame);
+        
+        // Header panel
+        JPanel headerPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                int w = getWidth();
+                int h = getHeight();
+                GradientPaint gp = new GradientPaint(0, 0, PRIMARY_BLUE, w, h, new Color(109, 213, 237));
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, w, h);
+            }
+        };
+        headerPanel.setPreferredSize(new Dimension(500, 80));
+        headerPanel.setLayout(new GridBagLayout());
+        
+        JLabel aboutTitle = new JLabel("Teen Investment Calculator");
+        aboutTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        aboutTitle.setForeground(Color.WHITE);
+        headerPanel.add(aboutTitle);
+        
+        // Content panel
+        JPanel contentPanel = new JPanel();
+        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        
+        String[] features = {
+            "Modern, intuitive interface designed for teens",
+            "Multiple investment calculation types",
+            "Real-time stock market simulator",
+            "AI-powered learning assistant",
+            "Utility calculator for smart spending decisions",
+            "Save and load your calculations",
+            "Beautiful interactive growth charts",
+            "Educational tooltips throughout"
+        };
+        
+        for (String feature : features) {
+            JLabel featureLabel = new JLabel(feature);
+            featureLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            featureLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            contentPanel.add(featureLabel);
+            contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        }
+        
+        contentPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
+        JLabel versionLabel = new JLabel("Version 3.0 - Modern UI Update");
+        versionLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        versionLabel.setForeground(PRIMARY_BLUE);
+        versionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        contentPanel.add(versionLabel);
+        
+        // Close button
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(Color.WHITE);
+        JButton closeButton = createModernButton("Close", PRIMARY_BLUE, 100);
+        closeButton.addActionListener(e -> aboutDialog.dispose());
+        buttonPanel.add(closeButton);
+        
+        aboutDialog.add(headerPanel, BorderLayout.NORTH);
+        aboutDialog.add(contentPanel, BorderLayout.CENTER);
+        aboutDialog.add(buttonPanel, BorderLayout.SOUTH);
+        
+        aboutDialog.setVisible(true);
     }
 
     private void configureLayout() {
@@ -761,5 +948,32 @@ public class GUI extends JFrame {
 
     public JFrame getFrame() {
         return frame;
+    }
+    
+    // Custom rounded border class (same as StockCalculatorDialog)
+    private static class RoundedBorder extends javax.swing.border.AbstractBorder {
+        private int radius;
+        private Color color;
+        private int thickness;
+        
+        RoundedBorder(int radius, Color color, int thickness) {
+            this.radius = radius;
+            this.color = color;
+            this.thickness = thickness;
+        }
+        
+        @Override
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setColor(color);
+            g2d.setStroke(new BasicStroke(thickness));
+            g2d.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+        }
+        
+        @Override
+        public Insets getBorderInsets(Component c) {
+            return new Insets(radius/2, radius/2, radius/2, radius/2);
+        }
     }
 }

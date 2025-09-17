@@ -11,9 +11,7 @@ public class EnhancedStockRates {
     private static final long CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
     private static Map<String, String> popularStocks = new HashMap<>();
     
-    // IMPORTANT: Replace this with your actual Alpha Vantage API key
-    // Get a free key at: https://www.alphavantage.co/support/#api-key
-    private static final String API_KEY = "your-api-key";
+    private static final String API_KEY = "your-api-key-here";
     
     static {
         // Teen-friendly stock symbols with company names
@@ -58,7 +56,7 @@ public class EnhancedStockRates {
             
             // Build the API URL
             String urlStr = String.format(
-                "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s",
+        "https://finnhub.io/api/v1/quote?symbol=%s&token=%s",
                 symbol, API_KEY
             );
             
@@ -102,49 +100,31 @@ public class EnhancedStockRates {
             }
             
             // Parse the current price from Global Quote
-            // Alpha Vantage returns: "05. price": "150.25"
+            // Finnhub returns: "c": 310.1
             double price = 0.0;
-            
-            // First check if we have a Global Quote response
-            if (!json.contains("Global Quote")) {
-                throw new Exception("No Global Quote found in response. Response: " + json.substring(0, Math.min(300, json.length())));
-            }
-            
-            // Look for the price field - try multiple variations
-            String[] pricePatterns = {
-                "\"05. price\": \"",
-                "\"05. price\":\"", 
-                "\"price\": \"",
-                "\"price\":\""
-            };
-            
-            boolean priceFound = false;
-            for (String priceKey : pricePatterns) {
-                int startIndex = json.indexOf(priceKey);
-                if (startIndex != -1) {
-                    startIndex += priceKey.length();
-                    int endIndex = json.indexOf("\"", startIndex);
-                    
-                    if (endIndex != -1) {
-                        String priceStr = json.substring(startIndex, endIndex);
-                        try {
-                            price = Double.parseDouble(priceStr);
-                            priceFound = true;
-                            System.out.println("Successfully parsed price using pattern: " + priceKey + " -> $" + price);
-                            break;
-                        } catch (NumberFormatException e) {
-                            System.out.println("Failed to parse price string: " + priceStr);
-                            continue;
-                        }
+            String priceKey = "\"c\":";
+            int startIndex = json.indexOf(priceKey);
+            if (startIndex != -1) {
+                startIndex += priceKey.length();
+                int endIndex = json.indexOf(",", startIndex);
+                if (endIndex == -1) { // last element in JSON
+                    endIndex = json.indexOf("}", startIndex);
+                }
+                if (endIndex != -1) {
+                    String priceStr = json.substring(startIndex, endIndex).trim();
+                    try {
+                        price = Double.parseDouble(priceStr);
+                        System.out.println("Successfully parsed price from Finnhub: $" + price);
+                    } catch (NumberFormatException e) {
+                        throw new Exception("Failed to parse price string: " + priceStr);
                     }
                 }
             }
-            
-            if (!priceFound) {
-                // Print more of the response for debugging
-                System.out.println("Full JSON response: " + json);
-                throw new Exception("Could not find or parse price in response");
+
+            if (price <= 0) {
+                throw new Exception("Invalid price received from Finnhub: " + json);
             }
+
             
             // Cache the result
             cachedRates.put(symbol, price);
@@ -298,9 +278,9 @@ public class EnhancedStockRates {
         try {
             double applePrice = getCurrentStockPrice("AAPL");
             if (applePrice > 0) {
-                System.out.println("✓ API is working! Apple stock price: $" + applePrice);
+                System.out.println("API is working! Apple stock price: $" + applePrice);
             } else {
-                System.out.println("✗ API returned invalid price");
+                System.out.println("API returned invalid price");
             }
         } catch (Exception e) {
             System.out.println("✗ API test failed: " + e.getMessage());
