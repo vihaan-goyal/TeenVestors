@@ -3,6 +3,9 @@ import java.awt.*;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+@SuppressWarnings("unused")
+
+
 public class GUI extends JFrame {
     private JFrame frame;
     private JPanel topPanel, bottomPanel, inputPanel, outputPanel;

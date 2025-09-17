@@ -27,7 +27,8 @@ public class StockCalculatorDialog extends JDialog {
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
-    
+
+    @SuppressWarnings("unused")
     private void initComponents() {
         // Create styled combo box with stock options
         String[] stockOptions = new String[stockMap.size()];
@@ -276,7 +277,8 @@ public class StockCalculatorDialog extends JDialog {
         
         return panel;
     }
-    
+
+    @SuppressWarnings("unused")
     private JButton createCalculateButton() {
         JButton button = new JButton("Calculate My Investment Growth");
         button.setFont(new Font("Segoe UI", Font.BOLD, 18));

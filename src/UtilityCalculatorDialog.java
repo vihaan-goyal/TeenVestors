@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 
+@SuppressWarnings("unused")
+
+
 public class UtilityCalculatorDialog extends JDialog {
     private JTextField happinessField, frequencyField, convenienceField, lifestyleField, 
                       timeYearsField, lifespanField, priceField;

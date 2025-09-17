@@ -8,6 +8,9 @@ import java.net.URI;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+@SuppressWarnings("unused")
+
+
 public class ClaudeEducationalChatbot extends JDialog {
     private JTextArea chatArea;
     private JTextField inputField;
