@@ -23,7 +23,7 @@ public class StockCalculatorDialog extends JDialog {
         this.stockMap = EnhancedStockRates.getPopularStocks();
         initComponents();
         setupLayout();
-        setSize(900, 700);
+        setSize(950, 900);
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
@@ -123,7 +123,12 @@ public class StockCalculatorDialog extends JDialog {
         // Add to scroll pane for better handling
         JScrollPane scrollPane = new JScrollPane(mainContainer);
         scrollPane.setBorder(null);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        // Increase wheel/page scroll speed while keeping bars hidden
+        scrollPane.setWheelScrollingEnabled(true);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(32);
+        scrollPane.getVerticalScrollBar().setBlockIncrement(160);
         add(scrollPane, BorderLayout.CENTER);
     }
     

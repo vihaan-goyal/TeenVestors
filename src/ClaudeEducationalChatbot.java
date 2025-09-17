@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.List;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URI;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -15,7 +16,6 @@ public class ClaudeEducationalChatbot extends JDialog {
     private boolean useAI = false;
     
     
-    // This will read your API key from the file
     private static final String CLAUDE_API_KEY = "your-api-key";
     private static final String CLAUDE_URL = "https://api.anthropic.com/v1/messages";
     private static final String CLAUDE_VERSION = "2023-06-01";
@@ -61,7 +61,7 @@ public class ClaudeEducationalChatbot extends JDialog {
         titleLabel.setForeground(Color.WHITE);
         
         // AI toggle button
-        JButton aiToggle = new JButton(useAI ? "AI: ON" : "Basic Mode: ON");
+        JButton aiToggle = new JButton(useAI ? "AI" : "Basic Mode");
         aiToggle.setBackground(useAI ? new Color(75, 0, 130) : new Color(158, 158, 158));
         aiToggle.setForeground(Color.WHITE);
         aiToggle.setFocusPainted(false);
@@ -81,7 +81,7 @@ public class ClaudeEducationalChatbot extends JDialog {
         chatArea.setWrapStyleWord(true);
         
         scrollPane = new JScrollPane(chatArea);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -147,7 +147,7 @@ public class ClaudeEducationalChatbot extends JDialog {
         // Welcome message
         appendToBotChat("Hi! I'm your investment learning assistant!\n\n" +
                        "I can help you understand compound interest, stocks, budgeting, and building wealth as a teenager.\n\n" +
-                       (useAI ? "I'm powered by AI for personalized responses!" : "Click 'Basic Mode: ON' to enable AI for smarter answers!") +
+                       (useAI ? "I'm powered by AI for personalized responses!" : "Click 'Basic Mode' to enable AI for smarter answers!") +
                        "\n\nWhat would you like to learn about?");
     }
 
@@ -181,7 +181,7 @@ public class ClaudeEducationalChatbot extends JDialog {
 
     private void toggleAI(JButton button) {
         useAI = !useAI;
-        button.setText(useAI ? "AI: ON" : "Basic Mode: ON");
+        button.setText(useAI ? "AI" : "Basic Mode");
         button.setBackground(useAI ? new Color(75, 0, 130) : new Color(158, 158, 158));
         
         if (useAI && CLAUDE_API_KEY.equals("your-claude-api-key-here")) {
@@ -256,7 +256,7 @@ public class ClaudeEducationalChatbot extends JDialog {
     }
 
     private String getClaudeResponse(String userMessage) throws Exception {
-        URL url = new URL(CLAUDE_URL);
+        URL url = URI.create(CLAUDE_URL).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         
         conn.setRequestMethod("POST");
