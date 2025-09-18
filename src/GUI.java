@@ -121,32 +121,55 @@ public class GUI extends JFrame {
     }
 
     private JButton createModernButton(String text, Color bgColor, int width) {
-        JButton button = new JButton(text);
+        JButton button = new JButton(text) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Paint rounded background with hover states
+                Color currentColor;
+                if (getModel().isPressed()) {
+                    currentColor = bgColor.darker().darker(); // Even darker when pressed
+                } else if (getModel().isRollover()) {
+                    currentColor = bgColor.darker(); // Darker when hovered
+                } else {
+                    currentColor = bgColor; // Normal state
+                }
+                
+                g2d.setColor(currentColor);
+                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+                
+                // Paint text centered
+                FontMetrics fm = g2d.getFontMetrics();
+                String buttonText = getText();
+                int textWidth = fm.stringWidth(buttonText);
+                int textX = (getWidth() - textWidth) / 2;
+                int textY = (getHeight() + fm.getAscent()) / 2 - 2;
+                
+                g2d.setColor(getForeground());
+                g2d.drawString(buttonText, textX, textY);
+            }
+            
+            @Override
+            protected void paintBorder(Graphics g) {
+                // Don't paint default border
+            }
+        };
+        
         button.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        button.setBackground(bgColor);
         button.setForeground(bgColor == WARNING_ORANGE || bgColor == SUCCESS_GREEN ? Color.BLACK : Color.WHITE);
         button.setPreferredSize(new Dimension(width, 45));
+        button.setContentAreaFilled(false);
         button.setBorderPainted(false);
         button.setFocusPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        // Hover effect
-        Color hoverColor = bgColor.darker();
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(hoverColor);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(bgColor);
-            }
-        });
         
         return button;
     }
     
     // New method to create image buttons
     private JButton createImageButton(String imagePath, String text, int width, int height) {
-        // Create a custom button class
         class ImageButton extends JButton {
             private boolean isHovered = false;
             
@@ -156,21 +179,29 @@ public class GUI extends JFrame {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                // Draw the image to fill the entire button
                 try {
                     ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
                     Image image = icon.getImage();
+                    
+                    // Create a rounded clipping area
+                    Shape oldClip = g2d.getClip();
+                    g2d.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 20, 20));
+                    
+                    // Draw the image within the rounded clip
                     g2d.drawImage(image, 0, 0, getWidth(), getHeight(), this);
                     
-                    // Add hover effect - darken the image when hovered
+                    // Restore the old clip
+                    g2d.setClip(oldClip);
+                    
+                    // Add hover effect with rounded overlay
                     if (isHovered) {
                         g2d.setColor(new Color(0, 0, 0, 80)); // Semi-transparent black overlay
-                        g2d.fillRect(0, 0, getWidth(), getHeight());
+                        g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
                         
                         // Add a subtle border for extra visual feedback
                         g2d.setColor(new Color(255, 255, 255, 150));
                         g2d.setStroke(new BasicStroke(2));
-                        g2d.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, 8, 8);
+                        g2d.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, 18, 18);
                     }
                     
                     // Add text overlay if provided
@@ -190,9 +221,9 @@ public class GUI extends JFrame {
                         g2d.drawString(text, x, y);
                     }
                 } catch (Exception e) {
-                    // Fallback to regular button if image fails to load
+                    // Fallback to rounded colored button if image fails to load
                     g2d.setColor(getBackground());
-                    g2d.fillRect(0, 0, getWidth(), getHeight());
+                    g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
                     if (text != null && !text.isEmpty()) {
                         g2d.setColor(getForeground());
                         g2d.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -378,26 +409,49 @@ public class GUI extends JFrame {
     }
 
     private JButton createCalculateButton() {
-        JButton button = new JButton("Calculate My Investment");
+        JButton button = new JButton("Calculate My Investment") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Paint rounded background with hover states
+                if (getModel().isPressed()) {
+                    g2d.setColor(new Color(35, 155, 86)); // Darker when pressed
+                } else if (getModel().isRollover()) {
+                    g2d.setColor(new Color(39, 174, 96)); // Lighter when hovered
+                } else {
+                    g2d.setColor(SUCCESS_GREEN); // Normal state
+                }
+                
+                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
+                
+                // Paint text centered
+                FontMetrics fm = g2d.getFontMetrics();
+                String text = getText();
+                int textWidth = fm.stringWidth(text);
+                int textX = (getWidth() - textWidth) / 2;
+                int textY = (getHeight() + fm.getAscent()) / 2 - 2;
+                
+                g2d.setColor(getForeground());
+                g2d.drawString(text, textX, textY);
+            }
+            
+            @Override
+            protected void paintBorder(Graphics g) {
+                // Don't paint default border - we want only the rounded background
+            }
+        };
+        
         button.setFont(new Font("Segoe UI", Font.BOLD, 18));
         button.setForeground(Color.WHITE);
-        button.setBackground(SUCCESS_GREEN);
         button.setPreferredSize(new Dimension(350, 50));
+        button.setContentAreaFilled(false);
         button.setBorderPainted(false);
         button.setFocusPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        // Hover effect
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(new Color(39, 174, 96));
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(SUCCESS_GREEN);
-            }
-        });
-        
         button.addActionListener(e -> handleCalculate());
+        
         return button;
     }
 
@@ -1040,7 +1094,6 @@ public class GUI extends JFrame {
         return frame;
     }
     
-    // Custom rounded border class (same as StockCalculatorDialog)
     private static class RoundedBorder extends javax.swing.border.AbstractBorder {
         private int radius;
         private Color color;
