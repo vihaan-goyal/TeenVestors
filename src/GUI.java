@@ -53,9 +53,35 @@ public class GUI extends JFrame {
     private void initFrame() {
         frame = new JFrame("Investment Calculator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        // Set a proper initial size instead of maximizing
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = Math.min(1200, (int)(screenSize.width * 0.9));
+        int height = Math.min(800, (int)(screenSize.height * 0.9));
+        frame.setSize(width, height);
+        
+        // Set minimum size to prevent the window from becoming too small
+        frame.setMinimumSize(new Dimension(800, 600));
+        
+        // Center the window on screen
+        frame.setLocationRelativeTo(null);
+        
         frame.setLayout(new BorderLayout());
         frame.getContentPane().setBackground(BACKGROUND_GRAY);
+        
+        // Add window state listener to handle dragging properly
+        frame.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                // Ensure the window doesn't become too small when dragged
+                if (frame.getWidth() < 800) {
+                    frame.setSize(800, frame.getHeight());
+                }
+                if (frame.getHeight() < 600) {
+                    frame.setSize(frame.getWidth(), 600);
+                }
+            }
+        });
     }
 
     private void initPanels() {
@@ -505,18 +531,16 @@ public class GUI extends JFrame {
     }
 
     private void buildBottomPanel() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int panelHeight = screenSize.height - 200;
-        
         // Create a scroll pane for the input panel
         JScrollPane inputScrollPane = new JScrollPane(inputPanel);
-        inputScrollPane.setPreferredSize(new Dimension(500, panelHeight));
+        inputScrollPane.setPreferredSize(new Dimension(500, 600));
         inputScrollPane.setBorder(null);
         inputScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         inputScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         inputScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         
-        outputPanel.setPreferredSize(new Dimension(screenSize.width - 500, panelHeight));
+        // Set a reasonable preferred size for the output panel
+        outputPanel.setPreferredSize(new Dimension(700, 600));
 
         bottomPanel.add(inputScrollPane, BorderLayout.WEST);
         bottomPanel.add(outputPanel, BorderLayout.CENTER);
@@ -1009,7 +1033,7 @@ public class GUI extends JFrame {
         // Create custom about dialog with modern styling
         JDialog aboutDialog = new JDialog(frame, "About Investment Calculator", true);
         aboutDialog.setLayout(new BorderLayout());
-        aboutDialog.setSize(500, 400);
+        aboutDialog.setSize(500, 450);
         aboutDialog.setLocationRelativeTo(frame);
         
         // Header panel

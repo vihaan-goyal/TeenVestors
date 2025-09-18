@@ -1,5 +1,6 @@
 import java.io.File;
 import javax.swing.JOptionPane;
+import javax.swing.plaf.DimensionUIResource;
 
 public class Main {
     public static void main(String[] args) {
@@ -58,5 +59,6 @@ public class Main {
         
         GUI gui = new GUI();
         gui.setVisible(true);
+        
     }
 }
