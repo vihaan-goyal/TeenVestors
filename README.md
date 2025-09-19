@@ -1,8 +1,8 @@
-# Teen Investment Calculator
+# Teen Investment Calculator 🧮
 
 A comprehensive financial education application designed to teach teenagers about investing, compound interest, and smart financial decision-making through interactive calculators and visualizations.
 
-## Table of Contents
+## Table of Contents 🎯
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -14,7 +14,7 @@ A comprehensive financial education application designed to teach teenagers abou
 - [Contributing](#contributing)
 - [License](#license)
 
-## Features
+## Features 📜
 
 ### Core Calculators
 - **Investment Calculator**: Calculate compound interest, simple interest, and growth with annual contributions
@@ -37,9 +37,9 @@ A comprehensive financial education application designed to teach teenagers abou
 - Color-coded results (green for gains, red for losses)
 - Professional typography using Segoe UI font family
 
-## Installation
+## Installation ✅
 
-### Prerequisites
+### Prerequisites 
 - Java Development Kit (JDK) 8 or higher (JDK 17 recommended)
 - Java Swing libraries (included with JDK)
 - Internet connection for stock price fetching
@@ -85,7 +85,7 @@ A comprehensive financial education application designed to teach teenagers abou
 2. Set `src` as source folder
 3. Run `Main.java` as Java Application
 
-## Usage
+## Usage 🪴
 
 ### Starting the Application
 When you first launch the app, you'll be prompted about existing saved calculations:
@@ -128,7 +128,7 @@ When you first launch the app, you'll be prompted about existing saved calculati
 3. Toggle between AI mode (requires API key) and basic mode
 4. Learn about compound interest, budgeting, and investment strategies
 
-## Calculator Types
+## Calculator Types ➕
 
 ### Investment Growth Models
 
@@ -153,7 +153,7 @@ When you first launch the app, you'll be prompted about existing saved calculati
 7. **Inflation Adjustment**: $A_{real} = \frac{A_{nominal}}{(1 + i)^t}$
    - Shows real purchasing power over time
 
-## API Configuration
+## API Configuration 🍽️
 
 ### Stock Price API (Finnhub)
 1. Get a free API key from [Finnhub.io](https://finnhub.io/)
@@ -171,7 +171,7 @@ When you first launch the app, you'll be prompted about existing saved calculati
    private static final String CLAUDE_API_KEY = "your-claude-api-key";
    ```
 
-## Project Structure
+## Project Structure 🏛️
 
 ```
 bi_cultural_app_challenge_2025/
@@ -194,7 +194,7 @@ bi_cultural_app_challenge_2025/
 └── README.md                        # This file
 ```
 
-## Technical Details
+## Technical Details ⚙️
 
 ### Dependencies
 - Java Swing for GUI components
@@ -213,7 +213,7 @@ bi_cultural_app_challenge_2025/
 - Dynamic Y-axis scaling with smart tick marks
 - Responsive layout adjusting to window size
 
-## Educational Components
+## Educational Components 🏫
 
 ### Learning Objectives
 - Understand compound interest and its power
@@ -228,28 +228,11 @@ bi_cultural_app_challenge_2025/
 - Real-world examples in AI assistant responses
 - Visual feedback for gains/losses
 
-## Contributing
-
-Contributions are welcome! Areas for improvement:
-- Add more stock symbols and exchanges
-- Implement portfolio tracking
-- Add more sophisticated risk models
-- Create additional educational mini-games
-- Improve AI assistant responses
-- Add data export features (CSV, PDF)
-
-## License
+## License 🪪
 
 This project was created for educational purposes as part of the 2025 Congressional App Challenge.
 
-## Acknowledgments
-
-- Designed for teenage financial literacy education
-- Stock data provided by Finnhub API
-- AI assistance powered by Claude (Anthropic)
-- UI inspired by modern fintech applications
-
-## Support
+## Support 💁‍♂️
 
 For issues or questions:
 1. Check the tooltips within the application
