@@ -220,7 +220,7 @@ bi_cultural_app_challenge_2025/
 - Compare different investment strategies
 - Learn about market volatility and risk
 - Make informed purchasing decisions
-- Start investing knowledge early
+- Start investing in knowledge early
 
 ### Built-in Tutorials
 - Hover tooltips explain financial concepts
@@ -240,7 +240,7 @@ Contributions are welcome! Areas for improvement:
 
 ## License
 
-This project was created for educational purposes as part of the 2025 Bi-Cultural App Challenge.
+This project was created for educational purposes as part of the 2025 Congressional App Challenge.
 
 ## Acknowledgments
 
