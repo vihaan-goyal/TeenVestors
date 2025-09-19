@@ -3,16 +3,16 @@
 A comprehensive financial education application designed to teach teenagers about investing, compound interest, and smart financial decision-making through interactive calculators and visualizations.
 
 ## Table of Contents 🎯
-- [Features]
-- [Installation]
-- [Usage]
-- [Calculator Types]
-- [API Configuration]
-- [Project Structure]
-- [Technical Details]
-- [Educational Components]
-- [Contributing]
-- [License]
+- Features
+- Installation
+- Usage
+- Calculator Types
+- API Configuration
+- Project Structure
+- Technical Details
+- Educational Components
+- Contributing
+- License
 
 ## Features 📜
 
