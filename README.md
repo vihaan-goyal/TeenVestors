@@ -40,33 +40,50 @@ A comprehensive financial education application designed to teach teenagers abou
 ## Installation
 
 ### Prerequisites
-- Java Development Kit (JDK) 8 or higher
+- Java Development Kit (JDK) 8 or higher (JDK 17 recommended)
 - Java Swing libraries (included with JDK)
 - Internet connection for stock price fetching
 
-### Setup Steps
+### Running with VS Code (Recommended)
 
-1. **Clone or download the repository**
+1. **Prerequisites for VS Code**
+   - Install VS Code
+   - Install the "Extension Pack for Java" from the VS Code marketplace
+   - JDK will be automatically installed (Eclipse Adoptium) or you can use your own
+
+2. **Open and Run**
+   - Open the project folder in VS Code
+   - Navigate to `src/Main.java`
+   - Click the "Run" button (▶️) that appears above the main method
+   - Or press `F5` to run in debug mode
+
+### Running from Command Line
+
+1. **Navigate to project directory**
    ```bash
-   git clone [repository-url]
    cd bi_cultural_app_challenge_2025
    ```
 
-2. **Compile the Java files**
+2. **Compile all Java files**
    ```bash
-   javac src/*.java
+   javac -d bin src/*.java
    ```
 
 3. **Run the application**
    ```bash
-   java -cp src Main
+   java -cp bin Main
    ```
 
-### Using an IDE
-If using IntelliJ IDEA, Eclipse, or VS Code:
-1. Import the project as a Java project
-2. Set `src` as the source directory
-3. Run `Main.java` as the main class
+### Using Other IDEs
+**IntelliJ IDEA:**
+1. Open project as Java project
+2. Mark `src` as Sources Root
+3. Run `Main.java`
+
+**Eclipse:**
+1. Import as "Existing Projects into Workspace"
+2. Set `src` as source folder
+3. Run `Main.java` as Java Application
 
 ## Usage
 
