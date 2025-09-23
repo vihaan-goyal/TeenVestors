@@ -5,14 +5,17 @@ import java.util.List;
 public class ValueProjectionGraphPanel extends JPanel {
     private final List<Double> values;
     private final int highlightYear;
+    
+    // Set maximum displayable value to prevent overflow
+    private static final double MAX_DISPLAY_VALUE = 1e12; // 1 trillion
+    private static final String OVERFLOW_MESSAGE = "Value too large to display";
 
     public ValueProjectionGraphPanel(List<Double> values, int highlightYear) {
         this.values = values;
         this.highlightYear = highlightYear;
-        setPreferredSize(new Dimension(700, 400)); // Made larger
+        setPreferredSize(new Dimension(700, 400));
         setBackground(Color.WHITE);
-        // Add some margin to prevent clipping
-        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // Reduced border
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     }
 
     @Override
@@ -23,20 +26,17 @@ public class ValueProjectionGraphPanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Get the actual drawing area (excluding border insets)
         Insets insets = getInsets();
         int w = getWidth() - insets.left - insets.right;
         int h = getHeight() - insets.top - insets.bottom;
         int offsetX = insets.left;
         int offsetY = insets.top;
         
-        // Ensure minimum size
         if (w < 100 || h < 100) return;
         
-        int padding = 80; // Increased padding for better label space
+        int padding = 80;
         int years = values.size() - 1;
 
-        // Ensure we have enough space for the graph
         int graphWidth = w - 2 * padding;
         int graphHeight = h - 2 * padding;
         
@@ -44,9 +44,17 @@ public class ValueProjectionGraphPanel extends JPanel {
 
         double min = values.stream().min(Double::compareTo).orElse(0.0);
         double max = values.stream().max(Double::compareTo).orElse(1.0);
+        
+        // Check if any values exceed our display limit
+        boolean hasOverflow = max > MAX_DISPLAY_VALUE;
+        if (hasOverflow) {
+            // Show overflow message instead of trying to render
+            showOverflowMessage(g2, offsetX, offsetY, w, h);
+            return;
+        }
+        
         if (max == min) max = min + 1;
 
-        // Calculate smart Y-axis range and ticks
         YAxisInfo yAxisInfo = calculateSmartYAxis(min, max);
         double yMin = yAxisInfo.min;
         double yMax = yAxisInfo.max;
@@ -56,14 +64,12 @@ public class ValueProjectionGraphPanel extends JPanel {
         g2.setColor(new Color(240, 240, 240));
         g2.setStroke(new BasicStroke(0.5f));
         
-        // Y-axis grid lines (based on smart ticks)
         for (double tickValue : yTicks) {
             int y = offsetY + h - padding - (int) ((tickValue - yMin) / (yMax - yMin) * graphHeight);
             g2.drawLine(offsetX + padding, y, offsetX + w - padding, y);
         }
 
-        // X-axis grid lines
-        int numXTicks = Math.min(years, 10); // Back to more tick marks for better detail
+        int numXTicks = Math.min(years, 10);
         for (int i = 0; i <= numXTicks; i++) {
             int x = offsetX + padding + (int)((i / (double) numXTicks) * graphWidth);
             g2.drawLine(x, offsetY + padding, x, offsetY + h - padding);
@@ -76,20 +82,18 @@ public class ValueProjectionGraphPanel extends JPanel {
         g2.drawLine(offsetX + padding, offsetY + padding, offsetX + padding, offsetY + h - padding);
 
         // Labels
-        g2.setFont(new Font("SansSerif", Font.BOLD, 14)); // Larger font
+        g2.setFont(new Font("SansSerif", Font.BOLD, 14));
         FontMetrics fm = g2.getFontMetrics();
         
-        // X-axis label
         String xLabel = "Year";
         int xLabelWidth = fm.stringWidth(xLabel);
         g2.drawString(xLabel, offsetX + (w - xLabelWidth) / 2, offsetY + h - 10);
         
-        // Y-axis label
         String yLabel = "Value ($)";
         g2.drawString(yLabel, offsetX + 10, offsetY + 20);
 
         // X-axis ticks and labels
-        g2.setFont(new Font("SansSerif", Font.PLAIN, 12)); // Larger tick font
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 12));
         fm = g2.getFontMetrics();
         
         for (int i = 0; i <= numXTicks; i++) {
@@ -102,19 +106,18 @@ public class ValueProjectionGraphPanel extends JPanel {
             g2.drawString(yearLabel, x - labelWidth/2, offsetY + h - padding + 20);
         }
 
-        // Y-axis ticks and labels (using smart ticks)
+        // Y-axis ticks and labels
         for (double tickValue : yTicks) {
             int y = offsetY + h - padding - (int) ((tickValue - yMin) / (yMax - yMin) * graphHeight);
             g2.drawLine(offsetX + padding - 5, y, offsetX + padding, y);
             
-            // Format the label based on the value size
-            String label = formatCurrency(tickValue);
+            String label = formatCurrencyCompact(tickValue);
             int labelWidth = fm.stringWidth(label);
             g2.drawString(label, offsetX + padding - labelWidth - 10, y + 5);
         }
 
-        // Line graph (adjusted for new Y range)
-        g2.setColor(new Color(33, 150, 243)); // Nice blue
+        // Line graph
+        g2.setColor(new Color(33, 150, 243));
         g2.setStroke(new BasicStroke(2.5f));
         for (int i = 0; i < years; i++) {
             int x1 = offsetX + padding + graphWidth * i / years;
@@ -124,37 +127,59 @@ public class ValueProjectionGraphPanel extends JPanel {
             g2.drawLine(x1, y1, x2, y2);
         }
 
-        // Highlight year (adjusted for new Y range)
+        // Highlight year
         if (highlightYear >= 0 && highlightYear < values.size()) {
             int x = offsetX + padding + graphWidth * highlightYear / years;
             int y = offsetY + h - padding - (int) ((values.get(highlightYear) - yMin) / (yMax - yMin) * graphHeight);
 
-            g2.setColor(new Color(244, 67, 54)); // Red
+            g2.setColor(new Color(244, 67, 54));
             g2.fillOval(x - 5, y - 5, 10, 10);
 
             g2.setFont(new Font("SansSerif", Font.BOLD, 11));
             g2.setColor(Color.BLACK);
 
-            String labelText = String.format("Year %d: %s", highlightYear, formatCurrency(values.get(highlightYear)));
+            String labelText = String.format("Year %d: %s", highlightYear, formatCurrencyCompact(values.get(highlightYear)));
             FontMetrics labelFm = g2.getFontMetrics();
             int labelWidth = labelFm.stringWidth(labelText);
 
-            // Position label to avoid clipping
             int labelX = x - labelWidth/2;
             int labelY = y - 10;
             
-            // Adjust if label would go off screen
             if (labelX < offsetX + padding) labelX = offsetX + padding;
             if (labelX + labelWidth > offsetX + w - padding) labelX = offsetX + w - padding - labelWidth;
             if (labelY < offsetY + padding + 15) labelY = y + 20;
 
             g2.drawString(labelText, labelX, labelY);
         }
+    }
+    
+    private void showOverflowMessage(Graphics2D g2, int offsetX, int offsetY, int w, int h) {
+        g2.setFont(new Font("SansSerif", Font.BOLD, 24));
+        g2.setColor(new Color(231, 76, 60)); // Red color
         
-        // Remove the thick border - let the panel handle borders
+        String message = OVERFLOW_MESSAGE;
+        FontMetrics fm = g2.getFontMetrics();
+        int messageWidth = fm.stringWidth(message);
+        int messageHeight = fm.getHeight();
+        
+        // Center the message
+        int x = offsetX + (w - messageWidth) / 2;
+        int y = offsetY + (h + messageHeight) / 2;
+        
+        g2.drawString(message, x, y);
+        
+        // Add helpful text below
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        g2.setColor(Color.DARK_GRAY);
+        String helpText = "Please use smaller input values";
+        fm = g2.getFontMetrics();
+        int helpWidth = fm.stringWidth(helpText);
+        x = offsetX + (w - helpWidth) / 2;
+        y = y + 40;
+        
+        g2.drawString(helpText, x, y);
     }
 
-    // Helper class to store Y-axis information
     private static class YAxisInfo {
         double min, max;
         double[] ticks;
@@ -166,41 +191,28 @@ public class ValueProjectionGraphPanel extends JPanel {
         }
     }
 
-    // Calculate smart Y-axis range and tick marks - ALWAYS starting at (0,0)
     private YAxisInfo calculateSmartYAxis(double dataMin, double dataMax) {
-        // Always start at 0 for financial data
         double yMin = 0;
-        
-        // Add some padding at the top (10% above max value)
         double yMax = dataMax * 1.1;
         
-        // Calculate a nice tick interval based on the full range
-        // Aim for 5-6 ticks (not too many to avoid crowding)
         double rawStep = yMax / 5; 
-        
-        // Round to a "nice" number
         double step = getNiceNumber(rawStep);
         
-        // Adjust upper bound to align with step (keep yMin at 0)
         yMax = Math.ceil(yMax / step) * step;
         
-        // Generate tick values starting from 0 with consistent intervals
         java.util.List<Double> tickList = new java.util.ArrayList<>();
         for (double tick = 0; tick <= yMax; tick += step) {
             tickList.add(tick);
         }
         
-        // Remove duplicates and ensure we don't have too many ticks
         java.util.Set<Double> uniqueTicks = new java.util.LinkedHashSet<>(tickList);
         tickList = new java.util.ArrayList<>(uniqueTicks);
         
-        // If we have too many ticks, thin them out
         while (tickList.size() > 6) {
             java.util.List<Double> newTickList = new java.util.ArrayList<>();
             for (int i = 0; i < tickList.size(); i += 2) {
                 newTickList.add(tickList.get(i));
             }
-            // Always include the max value
             if (!newTickList.contains(tickList.get(tickList.size() - 1))) {
                 newTickList.add(tickList.get(tickList.size() - 1));
             }
@@ -212,7 +224,6 @@ public class ValueProjectionGraphPanel extends JPanel {
         return new YAxisInfo(yMin, yMax, ticks);
     }
 
-    // Get a "nice" number for step size (1, 2, 5, 10, 20, 50, 100, etc.)
     private double getNiceNumber(double value) {
         double exponent = Math.floor(Math.log10(value));
         double fraction = value / Math.pow(10, exponent);
@@ -231,14 +242,20 @@ public class ValueProjectionGraphPanel extends JPanel {
         return niceFraction * Math.pow(10, exponent);
     }
 
-    // Format currency values with full numbers and commas (no abbreviations)
-    private String formatCurrency(double value) {
+    // Compact currency formatting for large numbers
+    private String formatCurrencyCompact(double value) {
         if (value == 0) {
             return "$0";
+        }
+        
+        if (Math.abs(value) >= 1e12) {
+            return String.format("$%.1fT", value / 1e12);
+        } else if (Math.abs(value) >= 1e9) {
+            return String.format("$%.1fB", value / 1e9);
         } else {
-            // Use NumberFormat for proper comma formatting without abbreviations
+            // Display thousands and millions with full formatting (commas)
             java.text.NumberFormat currencyFormat = java.text.NumberFormat.getCurrencyInstance(java.util.Locale.US);
-            currencyFormat.setMaximumFractionDigits(0); // No cents for cleaner labels
+            currencyFormat.setMaximumFractionDigits(0);
             return currencyFormat.format(value);
         }
     }

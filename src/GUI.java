@@ -5,7 +5,6 @@ import java.util.Locale;
 
 @SuppressWarnings("unused")
 
-
 public class GUI extends JFrame {
     private JFrame frame;
     private JPanel topPanel, bottomPanel, inputPanel, outputPanel;
@@ -29,6 +28,13 @@ public class GUI extends JFrame {
     private final Color CARD_WHITE = new Color(255, 255, 255);
     private final Color BACKGROUND_GRAY = new Color(247, 249, 252);
     private final Color LIGHT_GRAY = new Color(230, 230, 230);
+
+    // Overflow protection constants
+    private static final double MAX_DISPLAY_VALUE = 1e12; // 1 trillion
+    private static final double MAX_PRINCIPAL = 1e9;      // 1 billion max principal
+    private static final double MAX_RATE = 100.0;         // 100% max rate
+    private static final int MAX_YEARS = 100;             // 100 years max
+    private static final double MAX_CONTRIBUTION = 1e8;   // 100 million max contribution
 
     String[] options = {
         "Compound Interest",
@@ -299,8 +305,6 @@ public class GUI extends JFrame {
         mainInputContainer.setLayout(new BoxLayout(mainInputContainer, BoxLayout.Y_AXIS));
         mainInputContainer.setOpaque(false);
 
-    
-
         // Investment Type Card
         JPanel typeCard = createCard("Investment Type", createInvestmentTypePanel());
         mainInputContainer.add(typeCard);
@@ -327,7 +331,6 @@ public class GUI extends JFrame {
         
         // Initialize field visibility
         updateFieldsVisibility();
-
     }
 
     private JPanel createCard(String title, JPanel content) {
@@ -544,6 +547,129 @@ public class GUI extends JFrame {
 
         bottomPanel.add(inputScrollPane, BorderLayout.WEST);
         bottomPanel.add(outputPanel, BorderLayout.CENTER);
+    }
+
+    // Input validation methods
+    private boolean validateInputs(double principal, double rate, int years, double contribution) {
+        // Check for reasonable limits
+        if (principal > MAX_PRINCIPAL) {
+            showValidationError("Initial amount is too large. Maximum: $" + formatCurrencyCompact(MAX_PRINCIPAL));
+            return false;
+        }
+        
+        if (rate > MAX_RATE) {
+            showValidationError("Interest rate is too high. Maximum: " + MAX_RATE + "%");
+            return false;
+        }
+        
+        if (years > MAX_YEARS) {
+            showValidationError("Time period is too long. Maximum: " + MAX_YEARS + " years");
+            return false;
+        }
+        
+        if (contribution > MAX_CONTRIBUTION) {
+            showValidationError("Annual contribution is too large. Maximum: $" + formatCurrencyCompact(MAX_CONTRIBUTION));
+            return false;
+        }
+        
+        // Check for potential overflow before calculation
+        if (principal > 0 && rate > 0 && years > 0) {
+            double growthFactor = Math.pow(1 + rate, years);
+            if (growthFactor > (MAX_DISPLAY_VALUE / principal)) {
+                showValidationError("This combination of values will result in numbers too large to display.\nTry reducing the principal, rate, or time period.");
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    private void showValidationError(String message) {
+        JOptionPane.showMessageDialog(frame, 
+            message, 
+            "Input Too Large", 
+            JOptionPane.WARNING_MESSAGE);
+    }
+
+    // Compact currency formatting for large numbers
+    private String formatCurrencyCompact(double value) {
+        if (value == 0) {
+            return "$0";
+        }
+        
+        if (Math.abs(value) >= 1e12) {
+            return String.format("$%.2fT", value / 1e12);
+        } else if (Math.abs(value) >= 1e9) {
+            return String.format("$%.2fB", value / 1e9);
+        } else if (Math.abs(value) >= 1e6) {
+            return String.format("$%.2fM", value / 1e6);
+        } else if (Math.abs(value) >= 1e3) {
+            return String.format("$%.2fK", value / 1e3);
+        } else {
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
+            currencyFormat.setMaximumFractionDigits(0);
+            return currencyFormat.format(value);
+        }
+    }
+
+    // Update result display with overflow protection
+    private void updateResultDisplay(double futureValue, double principal) {
+        if (futureValue > MAX_DISPLAY_VALUE || Double.isInfinite(futureValue) || Double.isNaN(futureValue)) {
+            // Handle overflow case
+            resultLabel.setForeground(DANGER_RED);
+            resultLabel.setText("Result too large to display!");
+            
+            // Show overflow message in output panel
+            outputPanel.removeAll();
+            outputPanel.setBackground(CARD_WHITE);
+            outputPanel.setBorder(BorderFactory.createCompoundBorder(
+                new RoundedBorder(15, DANGER_RED, 2),
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+            ));
+            
+            JPanel errorPanel = new JPanel();
+            errorPanel.setLayout(new BoxLayout(errorPanel, BoxLayout.Y_AXIS));
+            errorPanel.setOpaque(false);
+            
+            JLabel errorTitle = new JLabel("Value Too Large!");
+            errorTitle.setFont(new Font("Segoe UI", Font.BOLD, 32));
+            errorTitle.setForeground(DANGER_RED);
+            errorTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+            
+            JLabel errorMessage = new JLabel("Please use smaller input values");
+            errorMessage.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+            errorMessage.setForeground(DARK_GRAY);
+            errorMessage.setAlignmentX(Component.CENTER_ALIGNMENT);
+            
+            JLabel suggestions = new JLabel("<html><center>Suggestions:<br>• Reduce initial amount<br>• Lower interest rate<br>• Fewer years</center></html>");
+            suggestions.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            suggestions.setForeground(DARK_GRAY);
+            suggestions.setAlignmentX(Component.CENTER_ALIGNMENT);
+            
+            errorPanel.add(errorTitle);
+            errorPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+            errorPanel.add(errorMessage);
+            errorPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+            errorPanel.add(suggestions);
+            
+            outputPanel.add(errorPanel, BorderLayout.CENTER);
+            outputPanel.revalidate();
+            outputPanel.repaint();
+            return;
+        }
+        
+        // Normal result display
+        double totalChange = futureValue - principal;
+        if (totalChange > 0) {
+            resultLabel.setForeground(SUCCESS_GREEN);
+            resultLabel.setText("Future Value: " + formatCurrencyCompact(futureValue) + "!");
+        } else if (totalChange < 0) {
+            resultLabel.setForeground(DANGER_RED);
+            resultLabel.setText("Future Value: " + formatCurrencyCompact(futureValue));
+        } else {
+            resultLabel.setForeground(DARK_GRAY);
+            resultLabel.setText("Future Value: " + formatCurrencyCompact(futureValue));
+        }
     }
 
     // Helper method to set tooltips for labels
@@ -835,11 +961,28 @@ public class GUI extends JFrame {
             double rate = Double.parseDouble(rateField.getText()) / 100.0;
             int years = Integer.parseInt(yearsField.getText());
 
+            // Get contribution if applicable
+            double contribution = 0;
+            String selected = (String) investmentTypeBox.getSelectedItem();
+            if (selected.equals(options[2])) { // With Annual Contributions
+                try {
+                    String contributionText = contributionField.getText().trim();
+                    if (!contributionText.isEmpty()) {
+                        contribution = Double.parseDouble(contributionText);
+                    }
+                } catch (NumberFormatException e) {
+                    contribution = 0;
+                }
+            }
+            
+            // Validate inputs before proceeding
+            if (!validateInputs(principal, rate, years, contribution)) {
+                return; // Stop execution if validation fails
+            }
+
             double futureValue = 0;
             java.util.List<Double> values = new java.util.ArrayList<>();
             values.add(principal);
-
-            String selected = (String) investmentTypeBox.getSelectedItem();
 
             if (selected.equals(options[0])) {
                 for (int i = 1; i <= years; i++) {
@@ -856,22 +999,12 @@ public class GUI extends JFrame {
                 futureValue = values.get(values.size() - 1);
                 Write.storeSimpleInterest(name, principal, rate, years);
             } else if (selected.equals(options[2])) {
-                double annualContribution = 0;
-                try {
-                    String contributionText = contributionField.getText().trim();
-                    if (!contributionText.isEmpty()) {
-                        annualContribution = Double.parseDouble(contributionText);
-                    }
-                } catch (NumberFormatException e) {
-                    annualContribution = 0;
-                }
-                
                 for (int i = 1; i <= years; i++) {
-                    double v = InvestmentLogic.calculateWithContributions(principal, annualContribution, rate, i);
+                    double v = InvestmentLogic.calculateWithContributions(principal, contribution, rate, i);
                     values.add(v);
                 }
                 futureValue = values.get(values.size() - 1);
-                Write.storeAnnualContributions(name, annualContribution, principal, rate, years);
+                Write.storeAnnualContributions(name, contribution, principal, rate, years);
             }
             else if (selected.equals(options[3])) {
                 for (int i = 1; i <= years; i++) {
@@ -903,47 +1036,37 @@ public class GUI extends JFrame {
                 Write.storeInflation(name, principal, rate, years);
             }
             
-            // Format the result with commas for better readability
-            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
-            
-            // Update result label with color based on gain/loss
-            double totalChange = futureValue - principal;
-            if (totalChange > 0) {
-                resultLabel.setForeground(SUCCESS_GREEN);
-                resultLabel.setText("Future Value: " + currencyFormat.format(futureValue) + "!");
-            } else if (totalChange < 0) {
-                resultLabel.setForeground(DANGER_RED);
-                resultLabel.setText("Future Value: " + currencyFormat.format(futureValue));
-            } else {
-                resultLabel.setForeground(DARK_GRAY);
-                resultLabel.setText("Future Value: " + currencyFormat.format(futureValue));
-            }
+            // Update result display with overflow protection
+            updateResultDisplay(futureValue, principal);
 
-            // Show graph in outputPanel with modern styling
-            outputPanel.removeAll();
-            outputPanel.setBackground(CARD_WHITE);
-            outputPanel.setBorder(BorderFactory.createCompoundBorder(
-                new RoundedBorder(15, SUCCESS_GREEN, 2),
-                BorderFactory.createEmptyBorder(30, 30, 30, 30)
-            ));
-            
-            // Results header
-            JPanel resultsHeader = new JPanel(new FlowLayout(FlowLayout.CENTER));
-            resultsHeader.setOpaque(false);
-            resultsHeader.add(resultLabel);
-            outputPanel.add(resultsHeader, BorderLayout.NORTH);
-            
-            // Add summary panel
-            JPanel summaryPanel = createSummaryPanel(principal, futureValue, years, rate);
-            outputPanel.add(summaryPanel, BorderLayout.SOUTH);
-            
-            // Graph
-            ValueProjectionGraphPanel graphPanel = new ValueProjectionGraphPanel(values, years);
-            graphPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-            outputPanel.add(graphPanel, BorderLayout.CENTER);
-            
-            outputPanel.revalidate();
-            outputPanel.repaint();
+            // Only show graph if values are within display limits
+            if (futureValue <= MAX_DISPLAY_VALUE && !Double.isInfinite(futureValue) && !Double.isNaN(futureValue)) {
+                // Show graph in outputPanel with modern styling
+                outputPanel.removeAll();
+                outputPanel.setBackground(CARD_WHITE);
+                outputPanel.setBorder(BorderFactory.createCompoundBorder(
+                    new RoundedBorder(15, SUCCESS_GREEN, 2),
+                    BorderFactory.createEmptyBorder(30, 30, 30, 30)
+                ));
+                
+                // Results header
+                JPanel resultsHeader = new JPanel(new FlowLayout(FlowLayout.CENTER));
+                resultsHeader.setOpaque(false);
+                resultsHeader.add(resultLabel);
+                outputPanel.add(resultsHeader, BorderLayout.NORTH);
+                
+                // Add summary panel
+                JPanel summaryPanel = createSummaryPanel(principal, futureValue, years, rate);
+                outputPanel.add(summaryPanel, BorderLayout.SOUTH);
+                
+                // Graph
+                ValueProjectionGraphPanel graphPanel = new ValueProjectionGraphPanel(values, years);
+                graphPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+                outputPanel.add(graphPanel, BorderLayout.CENTER);
+                
+                outputPanel.revalidate();
+                outputPanel.repaint();
+            }
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(frame, 
@@ -968,17 +1091,25 @@ public class GUI extends JFrame {
         summaryPanel.setOpaque(false);
         summaryPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 0, 40));
         
-        // Total Return
+        // Check for overflow before creating summary
+        if (futureValue > MAX_DISPLAY_VALUE || Double.isInfinite(futureValue) || Double.isNaN(futureValue)) {
+            return summaryPanel; // Return empty panel
+        }
+        
         double totalReturn = futureValue - principal;
         double percentReturn = (totalReturn / principal) * 100;
         
-        // Create metric cards
+        // Cap percentage display at reasonable levels
+        if (percentReturn > 999999) {
+            percentReturn = 999999;
+        }
+        
         summaryPanel.add(createMetricCard("Total Return", 
-            String.format("%s%.2f", totalReturn >= 0 ? "+$" : "-$", Math.abs(totalReturn)),
+            String.format("%s%s", totalReturn >= 0 ? "+" : "", formatCurrencyCompact(Math.abs(totalReturn))),
             totalReturn >= 0 ? SUCCESS_GREEN : DANGER_RED));
         
         summaryPanel.add(createMetricCard("Percentage Gain", 
-            String.format("%.1f%%", percentReturn),
+            String.format("%.1f%%", Math.min(percentReturn, 999999)),
             percentReturn >= 0 ? SUCCESS_GREEN : DANGER_RED));
         
         summaryPanel.add(createMetricCard("Annual Rate", 
@@ -1072,7 +1203,8 @@ public class GUI extends JFrame {
             "Utility calculator for smart spending decisions",
             "Save and load your calculations",
             "Beautiful interactive growth charts",
-            "Educational tooltips throughout"
+            "Educational tooltips throughout",
+            "Overflow protection for large numbers"
         };
         
         for (String feature : features) {
@@ -1085,7 +1217,7 @@ public class GUI extends JFrame {
         
         contentPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         
-        JLabel versionLabel = new JLabel("Version 3.0 - Modern UI Update");
+        JLabel versionLabel = new JLabel("Version 3.1 - Overflow Protection Update");
         versionLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         versionLabel.setForeground(PRIMARY_BLUE);
         versionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
