@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+@SuppressWarnings("unused")
+
 public class DeletableDropdown extends JPanel {
     private JTextField displayField;
     private JButton dropdownButton;
