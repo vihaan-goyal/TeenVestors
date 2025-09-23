@@ -1,8 +1,11 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Write {
 
     public static String filePath = "Store.txt";
+    
     //clears the storage file
     public static void clear() {
         try {
@@ -15,6 +18,69 @@ public class Write {
         } catch (IOException e) {
             System.out.println("An error occurred.");
       e.printStackTrace();
+        }
+    }
+    
+    // NEW: Delete a specific saved calculation by name
+    public static boolean deleteCalculation(String nameToDelete) {
+        try {
+            // Read all lines from the file
+            List<String> lines = new ArrayList<>();
+            FileReader fr = new FileReader(filePath);
+            StringBuilder sb = new StringBuilder();
+            int i;
+            while ((i = fr.read()) != -1) {
+                sb.append((char)i);
+            }
+            fr.close();
+            
+            String[] fileLines = sb.toString().split("\\n");
+            boolean found = false;
+            
+            // Filter out lines that match the name to delete
+            for (String line : fileLines) {
+                if (line.trim().isEmpty()) {
+                    lines.add(line);
+                    continue;
+                }
+                
+                // Extract the name from the line
+                int firstSpace = line.indexOf(" ");
+                if (firstSpace > 0) {
+                    String lineName = line.substring(0, firstSpace);
+                    if (!lineName.equals(nameToDelete)) {
+                        lines.add(line);
+                    } else {
+                        found = true;
+                        System.out.println("Deleted calculation: " + nameToDelete);
+                    }
+                } else {
+                    lines.add(line);
+                }
+            }
+            
+            if (!found) {
+                System.out.println("Calculation not found: " + nameToDelete);
+                return false;
+            }
+            
+            // Write the filtered lines back to the file
+            FileWriter store = new FileWriter(filePath);
+            for (int j = 0; j < lines.size(); j++) {
+                store.write(lines.get(j));
+                if (j < lines.size() - 1) {
+                    store.write("\n");
+                }
+            }
+            store.close();
+            
+            System.out.println("Successfully deleted calculation: " + nameToDelete);
+            return true;
+            
+        } catch (IOException e) {
+            System.out.println("Error deleting calculation: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -37,88 +103,87 @@ public class Write {
         return result.toArray(new String[0]);
     } 
     
-public static String findName(String name) {
-    try {
-        // First get all the lines from the file
-        FileReader fr = new FileReader(filePath);
-        StringBuilder sb = new StringBuilder();
-        int i;
-        while ((i = fr.read()) != -1) {
-            sb.append((char)i);
-        }
-        fr.close();
-        
-        String[] lines = sb.toString().split("\\n");
-        
-        // Find the most recent entry with this name
-        String foundLine = null;
-        for (int lineIndex = lines.length - 1; lineIndex >= 1; lineIndex--) {
-            String line = lines[lineIndex].trim();
-            if (line.isEmpty()) continue;
+    public static String findName(String name) {
+        try {
+            // First get all the lines from the file
+            FileReader fr = new FileReader(filePath);
+            StringBuilder sb = new StringBuilder();
+            int i;
+            while ((i = fr.read()) != -1) {
+                sb.append((char)i);
+            }
+            fr.close();
             
-            // Extract the name (first field before the first space)
-            int firstSpace = line.indexOf(" ");
-            if (firstSpace > 0) {
-                String lineName = line.substring(0, firstSpace);
-                if (lineName.equals(name)) {
-                    foundLine = line;
-                    break;
+            String[] lines = sb.toString().split("\\n");
+            
+            // Find the most recent entry with this name
+            String foundLine = null;
+            for (int lineIndex = lines.length - 1; lineIndex >= 1; lineIndex--) {
+                String line = lines[lineIndex].trim();
+                if (line.isEmpty()) continue;
+                
+                // Extract the name (first field before the first space)
+                int firstSpace = line.indexOf(" ");
+                if (firstSpace > 0) {
+                    String lineName = line.substring(0, firstSpace);
+                    if (lineName.equals(name)) {
+                        foundLine = line;
+                        break;
+                    }
                 }
             }
-        }
-        
-        System.out.println("Looking for name: '" + name + "'");
-        System.out.println("Found line: '" + foundLine + "'");
-        
-        return foundLine != null ? foundLine : "";
-        
-    } catch (IOException e) {
-        System.out.println("Error in findName: " + e.getMessage());
-        e.printStackTrace();
-        return "";
-    }
-}
-
-public static String[] getNames(Boolean dupes) {
-    try {
-        FileReader fr = new FileReader(filePath);
-        StringBuilder sb = new StringBuilder();
-        int i;
-        while ((i = fr.read()) != -1) {
-            sb.append((char)i);
-        }
-        fr.close();
-        
-        String[] lines = sb.toString().split("\\n");
-        java.util.List<String> namesList = new java.util.ArrayList<>();
-        
-        // Skip the first line (index 0) as it's usually empty/header
-        for (int lineIndex = 1; lineIndex < lines.length; lineIndex++) {
-            String line = lines[lineIndex].trim();
-            if (line.isEmpty()) continue;
             
-            int firstSpace = line.indexOf(" ");
-            if (firstSpace > 0) {
-                String name = line.substring(0, firstSpace);
-                namesList.add(name);
-            }
+            System.out.println("Looking for name: '" + name + "'");
+            System.out.println("Found line: '" + foundLine + "'");
+            
+            return foundLine != null ? foundLine : "";
+            
+        } catch (IOException e) {
+            System.out.println("Error in findName: " + e.getMessage());
+            e.printStackTrace();
+            return "";
         }
-        
-        String[] output = namesList.toArray(new String[0]);
-        
-        if (dupes) {
-            return removeDupes(output);
-        } else {
-            return output;
-        }
-        
-    } catch (IOException e) {
-        System.out.println("Error in getNames: " + e.getMessage());
-        e.printStackTrace();
-        return new String[0];
     }
-}
 
+    public static String[] getNames(Boolean dupes) {
+        try {
+            FileReader fr = new FileReader(filePath);
+            StringBuilder sb = new StringBuilder();
+            int i;
+            while ((i = fr.read()) != -1) {
+                sb.append((char)i);
+            }
+            fr.close();
+            
+            String[] lines = sb.toString().split("\\n");
+            java.util.List<String> namesList = new java.util.ArrayList<>();
+            
+            // Skip the first line (index 0) as it's usually empty/header
+            for (int lineIndex = 1; lineIndex < lines.length; lineIndex++) {
+                String line = lines[lineIndex].trim();
+                if (line.isEmpty()) continue;
+                
+                int firstSpace = line.indexOf(" ");
+                if (firstSpace > 0) {
+                    String name = line.substring(0, firstSpace);
+                    namesList.add(name);
+                }
+            }
+            
+            String[] output = namesList.toArray(new String[0]);
+            
+            if (dupes) {
+                return removeDupes(output);
+            } else {
+                return output;
+            }
+            
+        } catch (IOException e) {
+            System.out.println("Error in getNames: " + e.getMessage());
+            e.printStackTrace();
+            return new String[0];
+        }
+    }
 
     public static void storeCompoundInterest(String name, double principal, double rate, int years) {
         try {

@@ -11,7 +11,7 @@ public class GUI extends JFrame {
     private JTextField nameField, amountField, rateField, yearsField, contributionField;
     private JLabel resultLabel;
     private JComboBox<String> investmentTypeBox;
-    private JComboBox<String> storageBox;
+    private DeletableDropdown storageBox;
     private JLabel nameLabel = new JLabel();
     private JLabel amountLabel = new JLabel();
     private JLabel rateLabel = new JLabel();
@@ -488,17 +488,44 @@ public class GUI extends JFrame {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         panel.setOpaque(false);
         
-        storageBox = new JComboBox<>(Write.getNames(true));
-        storageBox.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        // Create the custom deletable dropdown
+        storageBox = new DeletableDropdown();
         storageBox.setPreferredSize(new Dimension(350, 40));
-        storageBox.setBackground(Color.WHITE);
-        storageBox.addActionListener(e -> loadSave());
         storageBox.setToolTipText("<html><b>Saved Calculations:</b> Pick a previous calculation to load it back.<br>" +
-                                  "Great for comparing different investment scenarios!</html>");
+                                  "Great for comparing different investment scenarios!<br>" +
+                                  "Click the X button to delete saved calculations.</html>");
+        
+        // Set up the selection listener
+        storageBox.addActionListener(e -> loadSave());
+        
+        // Set up the delete callback
+        storageBox.setDeleteCallback(itemName -> {
+            boolean success = Write.deleteCalculation(itemName);
+            if (success) {
+                // Refresh the dropdown with updated list
+                updateStorageBox();
+                
+                // Show success message
+                JOptionPane.showMessageDialog(frame, 
+                    "Successfully deleted: " + itemName, 
+                    "Calculation Deleted", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                // Show error message
+                JOptionPane.showMessageDialog(frame, 
+                    "Failed to delete: " + itemName, 
+                    "Deletion Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        
+        // Initialize with current saved calculations
+        updateStorageBox();
         
         panel.add(storageBox);
         return panel;
     }
+    
 
     private void buildOutputPanel() {
         outputPanel.setBackground(CARD_WHITE);
@@ -749,29 +776,36 @@ public class GUI extends JFrame {
     }
 
     private void updateStorageBox() {
-        String currentSelection = (String) storageBox.getSelectedItem();
-        storageBox.removeAllItems();
+        String currentSelection = storageBox.getSelectedItem(); // This is correct for DeletableDropdown
         String[] names = Write.getNames(true);
         
-        for (String name : names) {
-            if (name != null && !name.trim().isEmpty()) {
-                storageBox.addItem(name);
-            }
-        }
+        // Set the new items
+        storageBox.setItems(names); // This is correct for DeletableDropdown
         
+        // Try to restore the previous selection
         if (currentSelection != null) {
-            for (int i = 0; i < storageBox.getItemCount(); i++) {
-                if (storageBox.getItemAt(i).equals(currentSelection)) {
-                    storageBox.setSelectedIndex(i);
-                    return;
+            boolean found = false;
+            for (String name : names) {
+                if (name.equals(currentSelection)) {
+                    storageBox.setSelectedItem(currentSelection); // This is correct for DeletableDropdown
+                    found = true;
+                    break;
                 }
             }
+            // If the previously selected item was deleted, select the first item
+            if (!found && names.length > 0) {
+                storageBox.setSelectedItem(names[0]); // This is correct for DeletableDropdown
+            }
+        } else if (names.length > 0) {
+            // No previous selection, select the first item
+            storageBox.setSelectedItem(names[0]); // This is correct for DeletableDropdown
         }
-    }
+    }    
+    
 
     private void loadSave() {
         try {
-            String selectedName = (String) storageBox.getSelectedItem();
+            String selectedName = storageBox.getSelectedItem();
             if (selectedName == null || selectedName.isEmpty()) {
                 return;
             }
@@ -850,6 +884,7 @@ public class GUI extends JFrame {
             e.printStackTrace();
         }
     }
+    
 
     private void clearAllFields() {
         nameField.setText("");
@@ -1070,7 +1105,7 @@ public class GUI extends JFrame {
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(frame, 
-                "Please enter valid numbers in all fields.", 
+              "Please enter valid numbers in all fields.", 
                 "Input Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
@@ -1078,12 +1113,7 @@ public class GUI extends JFrame {
         updateStorageBox();
         
         String nameToSelect = currentName.isEmpty() ? "(default)" : currentName;
-        for (int i = 0; i < storageBox.getItemCount(); i++) {
-            if (storageBox.getItemAt(i).equals(nameToSelect)) {
-                storageBox.setSelectedIndex(i);
-                break;
-            }
-        }
+        storageBox.setSelectedItem(nameToSelect);
     }
     
     private JPanel createSummaryPanel(double principal, double futureValue, int years, double rate) {
