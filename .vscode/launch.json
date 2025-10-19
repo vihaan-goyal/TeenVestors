@@ -6,6 +6,13 @@
       "name": "Main",
       "request": "launch",
       "mainClass": "Main",
+      "projectName": "TeenVestors_c4f4510d"
+    },
+    {
+      "type": "java",
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "Main",
       "projectName": "TeenInvestmentCalculator_450808bf"
     },
     {

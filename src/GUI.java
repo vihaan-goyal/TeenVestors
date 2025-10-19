@@ -142,6 +142,7 @@ public class GUI extends JFrame {
         // About Button with image background
         JButton aboutButton = createImageButton("/images/About.png", "", 200, 45);
         aboutButton.addActionListener(e -> showAbout());
+
         
         buttonPanel.add(stockButton);
         buttonPanel.add(utilityButton);
@@ -1192,7 +1193,7 @@ public class GUI extends JFrame {
 
     private void showAbout() {
         // Create custom about dialog with modern styling
-        JDialog aboutDialog = new JDialog(frame, "About Investment Calculator", true);
+        JDialog aboutDialog = new JDialog(frame, "About TeenVestors", true);
         aboutDialog.setLayout(new BorderLayout());
         aboutDialog.setSize(500, 450);
         aboutDialog.setLocationRelativeTo(frame);
@@ -1226,15 +1227,13 @@ public class GUI extends JFrame {
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         
         String[] features = {
-            "Modern, intuitive interface designed for teens",
             "Multiple investment calculation types",
             "Real-time stock market simulator",
             "AI-powered learning assistant",
             "Utility calculator for smart spending decisions",
             "Save and load your calculations",
             "Beautiful interactive growth charts",
-            "Educational tooltips throughout",
-            "Overflow protection for large numbers"
+            "Educational tooltips throughout"
         };
         
         for (String feature : features) {
@@ -1247,12 +1246,6 @@ public class GUI extends JFrame {
         
         contentPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         
-        JLabel versionLabel = new JLabel("Version 3.1 - Overflow Protection Update");
-        versionLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        versionLabel.setForeground(PRIMARY_BLUE);
-        versionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        contentPanel.add(versionLabel);
-        
         // Close button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.setBackground(Color.WHITE);
@@ -1264,6 +1257,7 @@ public class GUI extends JFrame {
         aboutDialog.add(contentPanel, BorderLayout.CENTER);
         aboutDialog.add(buttonPanel, BorderLayout.SOUTH);
         
+
         aboutDialog.setVisible(true);
     }
 
