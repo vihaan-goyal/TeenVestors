@@ -153,7 +153,7 @@ public class StockCalculatorDialog extends JDialog {
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
         panel.setLayout(new GridBagLayout());
         
-        JLabel titleLabel = new JLabel("Teen Stock Investment Simulator");
+        JLabel titleLabel = new JLabel("TeenVestors' Stock Investment Simulator");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setForeground(Color.WHITE);
         

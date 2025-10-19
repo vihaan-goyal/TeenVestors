@@ -1,4 +1,4 @@
-# Teen Investment Calculator 🧮
+# TeenVestors 🧮
 
 A comprehensive financial education application designed to teach teenagers about investing, compound interest, and smart financial decision-making through interactive calculators and visualizations.
 

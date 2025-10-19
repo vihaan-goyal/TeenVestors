@@ -118,7 +118,7 @@ public class GUI extends JFrame {
         // Title container
         JPanel titleContainer = new JPanel();
         titleContainer.setOpaque(false);
-        JLabel title = new JLabel("Teen Investment Calculator");
+        JLabel title = new JLabel("TeenVestors");
         title.setFont(new Font("Segoe UI", Font.BOLD, 48));
         title.setForeground(Color.WHITE);
         titleContainer.add(title);
@@ -1214,7 +1214,7 @@ public class GUI extends JFrame {
         headerPanel.setPreferredSize(new Dimension(500, 80));
         headerPanel.setLayout(new GridBagLayout());
         
-        JLabel aboutTitle = new JLabel("Teen Investment Calculator");
+        JLabel aboutTitle = new JLabel("TeenVestors");
         aboutTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
         aboutTitle.setForeground(Color.WHITE);
         headerPanel.add(aboutTitle);
