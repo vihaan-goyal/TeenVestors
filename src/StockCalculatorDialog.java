@@ -38,9 +38,10 @@ public class StockCalculatorDialog extends JDialog {
         }
         
         stockCombo = new JComboBox<>(stockOptions);
+        stockCombo.setMaximumRowCount(11);
         stockCombo.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         stockCombo.setBackground(Color.WHITE);
-        stockCombo.setPreferredSize(new Dimension(300, 40));
+        stockCombo.setPreferredSize(new Dimension(300, 50));
         stockCombo.addActionListener(e -> updateStockInfo());
         
         investmentField = createStyledTextField("");
@@ -124,7 +125,7 @@ public class StockCalculatorDialog extends JDialog {
         // Add to scroll pane for better handling
         JScrollPane scrollPane = new JScrollPane(mainContainer);
         scrollPane.setBorder(null);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         // Increase wheel/page scroll speed while keeping bars hidden
         scrollPane.setWheelScrollingEnabled(true);

@@ -8,8 +8,7 @@ import java.net.URI;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-@SuppressWarnings("unused")
-
+    
 
 public class ClaudeEducationalChatbot extends JDialog {
     private JTextArea chatArea;
@@ -19,7 +18,7 @@ public class ClaudeEducationalChatbot extends JDialog {
     private boolean useAI = false;
     
     
-    private static final String CLAUDE_API_KEY = "your-api-key";
+    private static final String CLAUDE_API_KEY = "your-claude-api-key-here";
     private static final String CLAUDE_URL = "https://api.anthropic.com/v1/messages";
     private static final String CLAUDE_VERSION = "2023-06-01";
 
@@ -47,6 +46,7 @@ public class ClaudeEducationalChatbot extends JDialog {
         pack();
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setResizable(true);
     }
 
     private void setupUI() {
@@ -84,7 +84,7 @@ public class ClaudeEducationalChatbot extends JDialog {
         chatArea.setWrapStyleWord(true);
         
         scrollPane = new JScrollPane(chatArea);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);

@@ -221,22 +221,20 @@ public class DeletableDropdown extends JPanel {
         if (popup.getComponentCount() == 0) {
             return;
         }
-        
-        // Calculate proper popup size
+
         int popupWidth = getWidth();
-        int popupHeight = popup.getComponentCount() * 35 + 10; // 35px per item + padding
-        
-        // Ensure minimum width
+        int popupHeight = popup.getComponentCount() * 35 + 10;
+
         if (popupWidth < 300) {
             popupWidth = 300;
         }
-        
-        // Set size before showing
+
         popup.setPopupSize(popupWidth, popupHeight);
-        
-        // Show popup below the dropdown
-        popup.show(this, 0, getHeight());
-    }
+
+    
+        popup.show(this, 0, -popupHeight);
+    }   
+
     
     public void setSelectedItem(String item) {
         this.selectedItem = item;
