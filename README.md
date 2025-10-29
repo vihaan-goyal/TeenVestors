@@ -228,10 +228,6 @@ TeenVestors/
 - Real-world examples in AI assistant responses
 - Visual feedback for gains/losses
 
-## License 🪪
-
-This project was created for educational purposes as part of the 2025 Congressional App Challenge.
-
 ## Support 💁‍♂️
 
 For issues or questions:
@@ -239,7 +235,3 @@ For issues or questions:
 2. Use the AI Learning Assistant for educational queries
 3. Review saved calculations in the Load dropdown
 4. Ensure API keys are properly configured for full functionality
-
----
-
-**Remember**: This is an educational tool. Always consult with financial advisors before making real investment decisions!
