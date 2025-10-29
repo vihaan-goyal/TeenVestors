@@ -61,7 +61,7 @@ A comprehensive financial education application designed to teach teenagers abou
 
 1. **Navigate to project directory**
    ```bash
-   cd bi_cultural_app_challenge_2025
+   cd TeenVestors
    ```
 
 2. **Compile all Java files**
@@ -174,7 +174,7 @@ When you first launch the app, you'll be prompted about existing saved calculati
 ## Project Structure 🏛️
 
 ```
-bi_cultural_app_challenge_2025/
+TeenVestors/
 ├── src/
 │   ├── Main.java                    # Application entry point
 │   ├── GUI.java                     # Main user interface
